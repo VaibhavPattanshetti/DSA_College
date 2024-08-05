@@ -1,0 +1,52 @@
+#include<iostream>
+using namespace std;
+
+class Student{
+    
+    int roll;string name;float sgpa;
+
+    public:
+
+    void readData(){
+        cin>>name>>roll>>sgpa;
+    };
+
+    void displayData(){
+        cout<<"Name: "<<name<<"\nRoll: "<<roll<<"\nSGPA: "<<sgpa<<"\n";
+    };
+    friend void sort(Student obj[]);
+
+};
+
+void sort(Student obj[]){
+    
+    for(int i=1;i<4;i++){
+        Student current = obj[i];
+        int j = i-1;
+        while(obj[j].sgpa<current.sgpa && j>=0){
+            obj[j+1] = obj[j];
+            j--;
+        }
+        obj[j+1] = current;
+    }
+}
+
+
+int main(){
+    Student obj[4];
+    
+    cout<<"Enter Your Data\n";
+    for(int i=0;i<4;i++){
+        obj[i].readData();
+    }
+    
+    sort(obj);
+    
+    cout<<"----------------------------------------------------------------\n";
+    cout<<"Sorted Data\n";
+    for(int i=0;i<4;i++){
+        obj[i].displayData();
+    }
+    
+    return 0;
+}
