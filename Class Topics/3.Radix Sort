@@ -1,0 +1,77 @@
+//Time Complexity:O(n⋅k) where k is the number of digits
+//if elements are single digits than this code can be of O(k.(n+d)) where d is is the range of the input
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+// Function to perform counting sort based on a specific digit represented by exp
+void countingSort(std::vector<int>& arr, int exp) {
+    int n = arr.size();
+    std::vector<int> output(n); // Output array to store sorted elements
+    std::vector<int> count(10, 0); // Count array for digits 0-9
+
+    // Store count of occurrences of each digit
+    for (int i = 0; i < n; i++) {
+        int index = (arr[i] / exp) % 10;
+        count[index]++;
+    }
+
+    // Change count[i] so that it contains the actual position of this digit in output[]
+    for (int i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+    }
+
+    // Build the output array
+    for (int i = n - 1; i >= 0; i--) {
+        int index = (arr[i] / exp) % 10;
+        output[count[index] - 1] = arr[i];
+        count[index]--;
+    }
+
+    // Copy the output array to arr[], so that arr now contains sorted numbers according to the current digit
+    for (int i = 0; i < n; i++) {
+        arr[i] = output[i];
+    }
+}
+
+// Main function to implement radix sort
+void radixSort(std::vector<int>& arr) {
+    // Find the maximum number to know the number of digits
+    int maxNum = *std::max_element(arr.begin(), arr.end());
+
+    // Do counting sort for every digit. The exp is 10^i where i is the current digit number
+    for (int exp = 1; maxNum / exp > 0; exp *= 10) {
+        countingSort(arr, exp);
+    }
+}
+
+// Helper function to print the array
+void printArray(const std::vector<int>& arr) {
+    for (int num : arr) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    int n;
+    std::cout << "Enter the number of elements: ";
+    std::cin >> n;
+
+    std::vector<int> arr(n);
+    std::cout << "Enter the elements:" << std::endl;
+    for (int i = 0; i < n; i++) {
+        std::cin >> arr[i];
+    }
+
+    std::cout << "Original array: ";
+    printArray(arr);
+
+    radixSort(arr);
+
+    std::cout << "Sorted array: ";
+    printArray(arr);
+
+    return 0;
+}
