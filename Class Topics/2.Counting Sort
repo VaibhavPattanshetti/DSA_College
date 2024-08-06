@@ -1,3 +1,6 @@
+//Time Complexity: O(n+k) where k is the range of the input
+//*note -- counting sort is only for single digit numbers
+
 #include <iostream>
 #include <vector>
 
