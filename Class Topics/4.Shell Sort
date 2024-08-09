@@ -1,0 +1,34 @@
+//Shell Sort
+
+#include <iostream>
+using namespace std;
+int main() {
+    int n,x,j;
+    cout<<"Enter size of array:";
+    cin>>n;
+    int arr[n];
+    
+    cout<<"Enter array elements:";
+    for(int i=0;i<n;i++){
+        cin>>arr[i];
+    }
+    
+    for(int gap=n/2;gap>0;gap=gap/2){  //Shell Sort
+        for(int i=gap;i<n;i++){     //Insertion Sort
+            x = arr[i];
+            j = i-gap;
+            while(j>=0 && x<arr[j]){
+                arr[j+gap] = arr[j];
+                j = j - gap;
+            }
+            arr[j+gap] = x;
+        }
+    }
+    
+    cout<<"Sort array elements:";
+    for(int i=0;i<n;i++){
+        cout<<arr[i]<<" ";
+    }
+
+    return 0;
+}
