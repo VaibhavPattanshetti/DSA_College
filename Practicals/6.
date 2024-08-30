@@ -1,0 +1,82 @@
+
+#include <iostream>
+using namespace std;
+
+class Song{
+    string name,title;
+    
+    public:
+    Song *next;
+    
+    Song(){
+        next = nullptr;
+    }
+    
+    void Read(){
+        cout<<"Enter Name:";
+        cin>>name;
+        cout<<"Enter Title:";
+        cin>>title;
+    }
+    void Display(){
+        cout<<"\nName : "<<name;
+        cout<<"\nTitle : "<<title;
+    }
+    string getTitle(){
+        return title;
+    }
+    
+};
+
+class Playlist{
+    Song *head;
+    
+    public:
+    
+    Playlist(){
+        head=nullptr;
+    }
+    
+    ~Playlist(){
+        Song *cn=head;
+        while(cn!=nullptr){
+            Song *temp = cn;
+            cn = cn->next;
+            delete temp;
+        }
+    }
+    
+    void AddSong(){
+        Song *nn = new Song;
+        nn->Read();
+        
+        if(head==nullptr){
+            head=nn;
+        }else{
+            Song *cn;
+            for(cn=head;cn->next!=nullptr;cn=cn->next){}
+            cn->next = nn;
+        }
+    }
+    
+    void DisplayPlaylist(){
+        Song *cn;
+        for(cn=head;cn!=nullptr;cn=cn->next){
+            cn->Display();
+        }
+    }
+    
+};
+
+int main() {
+    
+    Playlist obj;
+    
+    obj.AddSong();
+    obj.AddSong();
+    obj.DisplayPlaylist();
+    obj.AddSong();
+    obj.DisplayPlaylist();
+
+    return 0;
+}
