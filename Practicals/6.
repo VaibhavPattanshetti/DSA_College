@@ -1,42 +1,42 @@
-
+//Song Play List using Simply Link List 
 #include <iostream>
 using namespace std;
 
 class Song{
     string name,title;
-    
+   
     public:
     Song *next;
-    
+   
     Song(){
         next = nullptr;
     }
-    
+   
     void Read(){
-        cout<<"Enter Name:";
-        cin>>name;
-        cout<<"Enter Title:";
-        cin>>title;
+        cout<<"\nEnter Singer Name:";
+        getline(cin,name);
+        cout<<"Enter Song Title:";
+        getline(cin,title);
     }
     void Display(){
-        cout<<"\nName : "<<name;
-        cout<<"\nTitle : "<<title;
+        cout<<"Singer Name : "<<name<<endl;
+        cout<<"Song Title : "<<title<<endl;
     }
     string getTitle(){
         return title;
     }
-    
+   
 };
 
 class Playlist{
     Song *head;
-    
+   
     public:
-    
+   
     Playlist(){
         head=nullptr;
     }
-    
+   
     ~Playlist(){
         Song *cn=head;
         while(cn!=nullptr){
@@ -45,11 +45,11 @@ class Playlist{
             delete temp;
         }
     }
-    
+   
     void AddSong(){
         Song *nn = new Song;
         nn->Read();
-        
+       
         if(head==nullptr){
             head=nn;
         }else{
@@ -58,25 +58,93 @@ class Playlist{
             cn->next = nn;
         }
     }
-    
+   
     void DisplayPlaylist(){
+        cout<<"\nCurrent Play List -> "<<endl;
         Song *cn;
         for(cn=head;cn!=nullptr;cn=cn->next){
             cn->Display();
         }
     }
+   
+    void DeleteSong(string delSong){
+        Song *cn=head,*prev=nullptr;
+       
+        while(cn!=nullptr){
+            if(cn->getTitle()==delSong){
+                if(cn==head){
+                    head = cn->next;
+                }else{
+                    prev->next = cn->next;
+                }
+                cout<<"\nSong '"<<cn->getTitle()<<"' has been Deleted.."<<endl;
+                delete cn;
+                return;
+            }
+            prev = cn;
+            cn = cn->next;
+        }
+       
+        cout << "\nSong not found!" << endl;
+    }
     
+    void DisplaySong(string title){
+        Song *nn=head;
+        while(nn!=nullptr){
+            if(nn->getTitle()==title){
+                nn->Display();
+                return;
+            }
+            nn = nn->next;
+        }
+        
+        cout << "\nSong not found!" << endl;
+    }
+   
 };
 
 int main() {
-    
+   
     Playlist obj;
-    
-    obj.AddSong();
-    obj.AddSong();
-    obj.DisplayPlaylist();
-    obj.AddSong();
-    obj.DisplayPlaylist();
+    int Choice;
+    string title;
+   
+    cout<<"1.Add Song.\n2.Delete Song.\n3.Display Playlist.\n4.Display Song.\n5.Exit.\n";
+   
+   bool Check=true;
+   while(Check){
+       cout<<"\nEnter Choice :";
+       cin>>Choice;
+       cin.ignore();
+       switch (Choice){
+           case 1:
+                obj.AddSong();
+                break;
+           case 2:
+                cout<<"Enter Song Title:";
+                getline(cin,title);
+               
+                obj.DeleteSong(title);
+                break;
+           case 3:
+                obj.DisplayPlaylist();
+                break;
+           case 4:
+                cout<<"Enter Song Title:";
+                getline(cin,title);
+                obj.DisplaySong(title);
+                break;
+           case 5:
+                Check = false;
+                break;
+           default:
+                cout<<"Enter Valid Option..."<<endl;
+                break;
+           
+       }
+   }
+   
+   cout<<"\nExiting....";
 
     return 0;
 }
