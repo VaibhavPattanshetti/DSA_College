@@ -1,0 +1,112 @@
+// Online C++ compiler to run C++ program online
+
+#include <iostream>
+using namespace std;
+class Text{
+    public:
+    string text;
+    Text *next,*prev;
+    
+    Text(){
+        next=nullptr;
+        prev=nullptr;
+    }
+    void Read(){
+        cout<<"Enter text :";
+        cin>>text;
+    }
+    void Display(){
+        cout<<"Entered text :"<<text<<endl;
+    }
+};
+
+class TextEditor{
+    Text *head,*tail;
+    
+    public:
+    
+    TextEditor(){
+        head=nullptr;
+        tail=nullptr;
+    }
+    void AddText(){
+        Text *nn = new Text;
+        nn->Read();
+        
+        if(head==nullptr){
+            head=nn;
+            tail=nn;
+        }else{
+            Text *cn=head;
+            while(cn->next!=nullptr){
+                cn = cn->next;
+            }
+            cn->next = nn;
+            nn->prev = cn;
+            tail = nn;
+        }
+    }
+    void DisplayTextEditor(){
+        Text *cn=head;
+        while(cn!=nullptr){
+            cn->Display();
+            cn = cn->next;
+        }
+    }
+    void DisplayTextEditorRev(){
+        Text *cn=tail;
+        while(cn!=nullptr){
+            cn->Display();
+            cn = cn->prev;
+        }
+    }
+    void DeleteText(const string& del) {
+    if (head == nullptr) {
+        cout << "Text Editor is Empty.." << endl;
+        return;
+    }
+
+    Text *cn = head;
+    while (cn != nullptr) {
+        if (cn->text == del) {
+            
+            if (cn == head) {
+                head = cn->next;
+                if (head != nullptr) {
+                    head->prev = nullptr;
+                } else {
+                    tail = nullptr; // List became empty
+                }
+            }
+            
+            else if (cn == tail) {
+                tail = cn->prev;
+                tail->next = nullptr;
+            }
+            
+            else {
+                cn->prev->next = cn->next;
+                cn->next->prev = cn->prev;
+            }
+            delete cn;
+            cout << "Text '" << del << "' is deleted from the Text Editor.." << endl;
+            return;
+        }
+        cn = cn->next;
+    }
+    cout << "Text '" << del << "' is not in the Text Editor.." << endl;
+}
+
+};
+
+int main() {
+    TextEditor obj;
+    obj.AddText();
+    obj.AddText();
+    obj.AddText();
+    obj.DisplayTextEditor();
+    obj.DeleteText("ashwin");
+    obj.DisplayTextEditorRev();
+
+    return 0;
+}
