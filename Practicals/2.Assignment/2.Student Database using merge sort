@@ -1,0 +1,97 @@
+#include<iostream>
+#include<climits>
+using namespace std;
+
+class Student{
+    
+    int roll;string name;float sgpa;
+
+    public:
+
+    void readData(){
+        cin>>name>>roll>>sgpa;
+    };
+
+    void displayData(){
+        cout<<"Name: "<<name<<"\nRoll: "<<roll<<"\nSGPA: "<<sgpa<<"\n";
+    };
+    
+    friend void merge(Student obj[],int low,int mid,int high);
+    friend void mergeSort(Student obj[],int low,int high);
+
+};
+
+void merge(Student obj[],int low,int mid,int high){
+    
+    int n1 = mid-low+1;
+    int n2 = high-mid;
+    
+    Student a[n1],b[n2];
+    
+    for(int i=0;i<n1;i++){
+        a[i] = obj[low+i];
+    }
+    for(int i=0;i<n2;i++){
+        b[i] = obj[mid+1+i];
+    }
+    
+    int i=0,j=0,k=low;
+    while(i<n1 && j<n2){
+        if(a[i].roll < b[j].roll){
+            obj[k] = a[i];
+            i++;
+            k++;
+        }else{
+            obj[k] = b[j];
+            j++;
+            k++;
+        }
+    }
+    
+    while(i<n1){
+        obj[k] = a[i];
+        i++;
+        k++;
+    }
+    while(j<n2){
+        obj[k] = b[j];
+        j++;
+        k++;
+    }
+    
+}
+
+void mergeSort(Student obj[],int low,int high){
+    
+    if(low<high){
+        int mid = (low+high)/2;
+        
+        mergeSort(obj,low,mid);
+        mergeSort(obj,mid+1,high);
+        
+        merge(obj,low,mid,high);
+    }
+}
+
+
+int main(){
+    int n;
+    cout<<"Enter number of students:";
+    cin>>n;
+    Student obj[n];
+    
+    cout<<"Enter Your Data\n";
+    for(int i=0;i<n;i++){
+        obj[i].readData();
+    }
+    
+    mergeSort(obj,0,n-1);
+    
+    cout<<"----------------------------------------------------------------\n";
+    cout<<"Sorted Data\n";
+    for(int i=0;i<n;i++){
+        obj[i].displayData();
+    }
+    
+    return 0;
+}
