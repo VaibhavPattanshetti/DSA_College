@@ -1,0 +1,111 @@
+// Queue using linked list
+#include <iostream>
+using namespace std;
+
+class node{
+  string name;
+  public:
+  node *next;
+  node(){next=nullptr;}
+  ~node(){next=nullptr;}
+  
+  void read(){
+      cout<<"Enter name :";
+      cin>>name;
+  }
+  void display(){
+      cout<<"name : "<<name<<endl;
+  }
+  
+};
+
+class queue{
+    node *front,*rear;
+    public:
+    queue(){front = rear = nullptr;}
+    ~queue(){front = rear = nullptr;}
+    
+    void Insert();
+    void Delete();
+    bool isEmpty();
+    void display();
+};
+
+void queue::Insert(){
+    node *nn = new node;
+    nn->read();
+    
+    if(isEmpty()){
+        front = nn;
+        rear = nn;
+    }else{
+        rear->next = nn;
+        rear = nn;
+    }
+}
+
+void queue::Delete(){
+    if(isEmpty()){
+        cout<<"Queue is Empty!!"<<endl;
+        return;
+    }
+    
+    node *temp=front;
+    front = front->next;
+    delete temp;
+    if(isEmpty()){
+        rear = nullptr;
+    }
+}
+
+bool queue::isEmpty(){
+    return front==nullptr;
+}
+
+void queue::display(){
+    if(isEmpty()){
+        cout<<"Queue is Empty!!"<<endl;
+        return;
+    }
+    cout<<"Current Queue :"<<endl;
+    for(node *cn=front;cn!=nullptr;cn=cn->next){
+        cn->display();
+    }
+}
+
+int main() {
+    queue q;
+    bool check = true;
+    int choice;
+    
+    cout<<"1. Add Party to Waitlist\n2. Seat Party\n3. Display Waitlist\n4. Exit"<<endl;
+    cout<<"------------------------------------------------------"<<endl;
+    
+    while(check){
+        cout<<"Enter Choice : ";
+        cin>>choice;
+        
+        switch(choice){
+            case 1:
+                q.Insert();
+                break;
+            case 2:
+                q.Delete();
+                break;
+            case 3:
+                q.display();
+                break;
+            case 4:
+                check = false;
+                break;
+            default:
+                cout<<"Enter valid option..."<<endl;
+                break;
+        }
+        
+    }
+    
+    cout<<"Exiting...";
+
+    return 0;
+}
