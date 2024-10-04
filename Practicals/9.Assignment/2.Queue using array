@@ -1,0 +1,106 @@
+// Queue using array
+//Time Complexity -- O(n)
+#include <iostream>
+#define size 10
+using namespace std;
+
+class queue{
+    string arr[size];int front,rear;
+    public:
+    queue(){front = rear = -1;}
+    ~queue(){front = rear = -1;}
+    
+    void Insert();
+    void Delete();
+    bool isEmpty();
+    bool isFull();
+    void display();
+};
+
+void queue::Insert(){
+    
+    if(isFull()){
+        cout<<"Queue Overflow!!"<<endl;
+        return;
+    }
+    if(isEmpty()){
+        front++;rear++;
+        cout<<"Enter name :";
+        cin>>arr[rear];
+    }else{
+        rear++;
+        cout<<"Enter name :";
+        cin>>arr[rear];
+    }
+}
+
+void queue::Delete(){
+    if(isEmpty()){
+        cout<<"Queue is Empty!!"<<endl;
+        return;
+    }
+    
+    for(int i=front;i<rear;i++){
+        arr[i] = arr[i+1];
+    }
+    rear--;
+    if(rear==-1){
+        front=-1;
+    }
+}
+
+bool queue::isEmpty(){
+    return front==-1;
+}
+
+bool queue::isFull(){
+    return rear==(size-1);
+}
+
+void queue::display(){
+    if(isEmpty()){
+        cout<<"Queue is Empty!!"<<endl;
+        return;
+    }
+    cout<<"Current Queue :"<<endl;
+    for(int i=front;i<=rear;i++){
+        cout<<arr[i]<<endl;
+    }
+}
+
+int main() {
+    queue q;
+    bool check = true;
+    int choice;
+    
+    cout<<"1. Add Party to Waitlist\n2. Seat Party\n3. Display Waitlist\n4. Exit"<<endl;
+    cout<<"------------------------------------------------------"<<endl;
+    
+    while(check){
+        cout<<"Enter Choice : ";
+        cin>>choice;
+        
+        switch(choice){
+            case 1:
+                q.Insert();
+                break;
+            case 2:
+                q.Delete();
+                break;
+            case 3:
+                q.display();
+                break;
+            case 4:
+                check = false;
+                break;
+            default:
+                cout<<"Enter valid option..."<<endl;
+                break;
+        }
+        
+    }
+    
+    cout<<"Exiting...";
+
+    return 0;
+}
