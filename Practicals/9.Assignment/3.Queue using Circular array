@@ -1,0 +1,253 @@
+// Queue using Circular array
+//Time Complexity -- O(n)
+#include <iostream>
+#define size 5
+using namespace std;
+
+class customer{  //Class which consist of customer data
+  string name;
+  int contact;
+  public:
+  customer(){   //Constructor to initialize Attributes of class
+      name = "Null";
+      contact = 0;
+  }
+  void read(){    //Function to read customer data
+        cout<<"Enter name :";
+        cin>>name;
+        cout<<"Enter contact :";
+        cin>>contact;
+  }
+  void Display(){   //Function to display customer data
+      cout<<"Name : "<<name;
+      cout<<"\nContact : "<<contact;
+      cout<<endl;
+  }
+};
+
+class queue{
+    customer arr[size];  //array of objects of class 'customer'
+    int front,rear;    //front and rear will point first and last elements of queue
+    public:
+    queue(){front = rear = -1;}
+    ~queue(){front = rear = -1;}
+    
+    void Insert();
+    void Delete();
+    bool isEmpty();
+    bool isFull();
+    void display();
+};
+
+void queue::Insert(){  //function to add new customer in queue
+    
+    if(isFull()){   //first check whether queue is full than add 
+        cout<<"Queue Overflow!!"<<endl;
+        return;
+    }
+    if(isEmpty()){   //if queue is empty increment front also else only rear
+        front++;rear++;
+        arr[rear].read();
+    }else{
+        rear = (rear+1)%size;
+        arr[rear].read();
+    }
+}
+
+void queue::Delete(){   //function to remove customer from queue
+    if(isEmpty()){  //first check whether queue is empty or not
+        cout<<"Queue is Empty!!"<<endl;
+        return;
+    }// Queue using Circular array
+//Time Complexity -- O(n)
+#include <iostream>
+#define size 5
+using namespace std;
+
+class customer{  //Class which consist of customer data
+  string name;
+  int contact;
+  public:
+  customer(){   //Constructor to initialize Attributes of class
+      name = "Null";
+      contact = 0;
+  }
+  void read(){    //Function to read customer data
+        cout<<"Enter name :";
+        cin>>name;
+        cout<<"Enter contact :";
+        cin>>contact;
+  }
+  void Display(){   //Function to display customer data
+      cout<<"Name : "<<name;
+      cout<<"\nContact : "<<contact;
+      cout<<endl;
+  }
+};
+
+class queue{
+    customer arr[size];  //array of objects of class 'customer'
+    int front,rear;    //front and rear will point first and last elements of queue
+    public:
+    queue(){front = rear = -1;}
+    ~queue(){front = rear = -1;}
+    
+    void Insert();
+    void Delete();
+    bool isEmpty();
+    bool isFull();
+    void display();
+};
+
+void queue::Insert(){  //function to add new customer in queue
+    
+    if(isFull()){   //first check whether queue is full than add 
+        cout<<"Queue Overflow!!"<<endl;
+        return;
+    }
+    if(isEmpty()){   //if queue is empty increment front also else only rear
+        front++;rear++;
+        arr[rear].read();
+    }else{
+        rear = (rear+1)%size;
+        arr[rear].read();
+    }
+}
+
+void queue::Delete(){   //function to remove customer from queue
+    if(isEmpty()){  //first check whether queue is empty or not
+        cout<<"Queue is Empty!!"<<endl;
+        return;
+    }
+    
+    if(rear==front){    //if this condition is true that means only 1 element is in queue
+        front=rear=-1; //than we will reset front and rear back to -1
+    }else{
+        front = (front+1)%size;
+    }
+}
+
+bool queue::isEmpty(){  //if front is -1 that means queue is empty
+    return front==-1;
+}
+
+bool queue::isFull(){
+    return (rear+1)%size==front;
+}
+
+void queue::display(){  //function to display entire queue
+    if(isEmpty()){
+        cout<<"Queue is Empty!!"<<endl;
+        return;
+    }
+    cout<<"Current Queue :"<<endl;
+    int i=front;
+    while(i!=rear){
+        arr[i].Display();
+        i=(i+1)%size;
+    }
+    arr[i].Display();   //after while loop only last element is remaining to display
+}
+
+int main() {
+    queue q;
+    bool check = true;
+    int choice;
+    
+    cout<<"1. Add Party to Waitlist\n2. Seat Party\n3. Display Waitlist\n4. Exit"<<endl;
+    cout<<"------------------------------------------------------"<<endl;
+    
+    while(check){
+        cout<<"Enter Choice : ";
+        cin>>choice;
+        
+        switch(choice){
+            case 1:
+                q.Insert();
+                break;
+            case 2:
+                q.Delete();
+                break;
+            case 3:
+                q.display();
+                break;
+            case 4:
+                check = false;
+                break;
+            default:
+                cout<<"Enter valid option..."<<endl;
+                break;
+        }
+        
+    }
+    
+    cout<<"Exiting...";
+
+    return 0;
+}
+    
+    if(rear==front){    //if this condition is true that means only 1 element is in queue
+        front=rear=-1; //than we will reset front and rear back to -1
+    }else{
+        front = (front+1)%size;
+    }
+}
+
+bool queue::isEmpty(){  //if front is -1 that means queue is empty
+    return front==-1;
+}
+
+bool queue::isFull(){
+    return (rear+1)%size==front;
+}
+
+void queue::display(){  //function to display entire queue
+    if(isEmpty()){
+        cout<<"Queue is Empty!!"<<endl;
+        return;
+    }
+    cout<<"Current Queue :"<<endl;
+    int i=front;
+    while(i!=rear){
+        arr[i].Display();
+        i=(i+1)%size;
+    }
+    arr[i].Display();   //after while loop only last element is remaining to display
+}
+
+int main() {
+    queue q;
+    bool check = true;
+    int choice;
+    
+    cout<<"1. Add Party to Waitlist\n2. Seat Party\n3. Display Waitlist\n4. Exit"<<endl;
+    cout<<"------------------------------------------------------"<<endl;
+    
+    while(check){
+        cout<<"Enter Choice : ";
+        cin>>choice;
+        
+        switch(choice){
+            case 1:
+                q.Insert();
+                break;
+            case 2:
+                q.Delete();
+                break;
+            case 3:
+                q.display();
+                break;
+            case 4:
+                check = false;
+                break;
+            default:
+                cout<<"Enter valid option..."<<endl;
+                break;
+        }
+        
+    }
+    
+    cout<<"Exiting...";
+
+    return 0;
+}
