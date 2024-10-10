@@ -1,52 +1,59 @@
 #include<iostream>
 using namespace std;
 
-class Student{
-    
-    int roll;string name;float sgpa;
+// Define the Student class
+class Student {
+    // Private member variables
+    int roll;           // Roll number of the student
+    string name;       // Name of the student
+    float sgpa;        // SGPA of the student
 
-    public:
+public:
+    // Method to read student data from input
+    void readData() {
+        cin >> name >> roll >> sgpa; // Input: name, roll number, and SGPA
+    }
 
-    void readData(){
-        cin>>name>>roll>>sgpa;
-    };
+    // Method to display student data
+    void displayData() {
+        cout << "Name: " << name << "\nRoll: " << roll << "\nSGPA: " << sgpa << "\n";
+    }
 
-    void displayData(){
-        cout<<"Name: "<<name<<"\nRoll: "<<roll<<"\nSGPA: "<<sgpa<<"\n";
-    };
-    friend void sort(Student obj[]);
-
+    // Friend function to allow access to private members for sorting
+    friend void sort(Student obj[], int n);
 };
 
-void sort(Student obj[]){
-    
-    for(int i=1;i<4;i++){
-        Student current = obj[i];
-        int j = i-1;
-        while(obj[j].sgpa<current.sgpa && j>=0){
-            obj[j+1] = obj[j];
-            j--;
+// Function to sort an array of Student objects by roll number
+void sort(Student obj[], int n) {
+    // Insertion sort algorithm
+    for (int i = 1; i < n; i++) {
+        Student current = obj[i]; // Current student to be positioned
+        int j = i - 1; // Index of the previous student
+        // Shift students with a higher roll number to the right
+        while (j >= 0 && obj[j].roll > current.roll) {
+            obj[j + 1] = obj[j]; // Move the student to the right
+            j--; // Move to the previous index
         }
-        obj[j+1] = current;
+        obj[j + 1] = current; // Place the current student in the correct position
     }
 }
 
+int main() {
+    int n = 15; // Number of students
+    Student obj[n]; // Array of Student objects
 
-int main(){
-    Student obj[4];
-    
-    cout<<"Enter Your Data\n";
-    for(int i=0;i<4;i++){
-        obj[i].readData();
+    cout << "Enter Your Data\n"; // Prompt for user input
+    for (int i = 0; i < n; i++) {
+        obj[i].readData(); // Read data for each student
     }
-    
-    sort(obj);
-    
-    cout<<"----------------------------------------------------------------\n";
-    cout<<"Sorted Data\n";
-    for(int i=0;i<4;i++){
-        obj[i].displayData();
+
+    sort(obj, n); // Sort the array of students by roll number
+
+    cout << "----------------------------------------------------------------\n";
+    cout << "Sorted Data\n"; // Display sorted student data
+    for (int i = 0; i < n; i++) {
+        obj[i].displayData(); // Show each student's data
     }
-    
-    return 0;
+
+    return 0; // Indicate successful completion
 }
