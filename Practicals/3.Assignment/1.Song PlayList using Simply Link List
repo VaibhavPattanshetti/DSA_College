@@ -1,150 +1,173 @@
-//Song Play List using Simply Link List 
 #include <iostream>
 using namespace std;
 
-class Song{
-    string name,title;
-   
-    public:
-    Song *next;
-   
-    Song(){
+// Class representing a Song
+class Song {
+    string name;  // Singer's name
+    string title; // Song title
+    int duration; // Duration of the song in seconds
+
+public:
+    Song *next; // Pointer to the next song in the playlist
+
+    // Constructor initializing the next pointer to nullptr
+    Song() {
         next = nullptr;
     }
-   
-    void Read(){
-        cout<<"\nEnter Singer Name:";
-        getline(cin,name);
-        cout<<"Enter Song Title:";
-        getline(cin,title);
+
+    // Method to read song details from user input
+    void Read() {
+        cout << "\nEnter Singer Name: ";
+        getline(cin, name); // Read singer's name
+        cout << "Enter Song Title: ";
+        getline(cin, title); // Read song title
+        cout << "Enter Song Duration: ";
+        cin >> duration; // Read song duration
+        cin.ignore(); // Clear newline from input buffer
     }
-    void Display(){
-        cout<<"Singer Name : "<<name<<endl;
-        cout<<"Song Title : "<<title<<endl;
+
+    // Method to display song details
+    void Display() {
+        cout << "Singer Name: " << name << endl;
+        cout << "Song Title: " << title << endl;
+        cout << "Song Duration: " << duration << " seconds" << endl;
     }
-    string getTitle(){
+
+    // Getter for the song title
+    string getTitle() {
         return title;
     }
-   
 };
 
-class Playlist{
-    Song *head;
-   
-    public:
-   
-    Playlist(){
-        head=nullptr;
+// Class representing a Playlist of songs
+class Playlist {
+    Song *head; // Pointer to the head (first song) of the playlist
+
+public:
+    // Constructor initializing the head pointer to nullptr
+    Playlist() {
+        head = nullptr;
     }
-   
-    ~Playlist(){
-        Song *cn=head;
-        while(cn!=nullptr){
-            Song *temp = cn;
-            cn = cn->next;
-            delete temp;
+
+    // Destructor to free allocated memory for songs in the playlist
+    ~Playlist() {
+        Song *cn = head; // Current song pointer
+        while (cn != nullptr) {
+            Song *temp = cn; // Store current song temporarily
+            cn = cn->next; // Move to the next song
+            delete temp; // Delete current song
         }
     }
-   
-    void AddSong(){
-        Song *nn = new Song;
-        nn->Read();
+
+    // Method to add a new song to the playlist
+    void AddSong() {
+        Song *nn = new Song; // Create a new song
+        nn->Read(); // Read song details
        
-        if(head==nullptr){
-            head=nn;
-        }else{
-            Song *cn;
-            for(cn=head;cn->next!=nullptr;cn=cn->next){}
-            cn->next = nn;
+        // If the playlist is empty, set the new song as the head
+        if (head == nullptr) {
+            head = nn;
+        } else {
+            Song *cn; // Current song pointer
+            // Traverse to the end of the playlist
+            for (cn = head; cn->next != nullptr; cn = cn->next) {}
+            cn->next = nn; // Link the new song at the end
         }
     }
-   
-    void DisplayPlaylist(){
-        cout<<"\nCurrent Play List -> "<<endl;
-        Song *cn;
-        for(cn=head;cn!=nullptr;cn=cn->next){
+
+    // Method to display all songs in the playlist
+    void DisplayPlaylist() {
+        cout << "\nCurrent Play List -> " << endl;
+        Song *cn; // Current song pointer
+        // Traverse and display each song
+        for (cn = head; cn != nullptr; cn = cn->next) {
             cn->Display();
         }
     }
-   
-    void DeleteSong(string delSong){
-        Song *cn=head,*prev=nullptr;
+
+    // Method to delete a song by title
+    void DeleteSong(string delSong) {
+        Song *cn = head, *prev = nullptr; // Current and previous song pointers
        
-        while(cn!=nullptr){
-            if(cn->getTitle()==delSong){
-                if(cn==head){
+        // Traverse the playlist to find the song to delete
+        while (cn != nullptr) {
+            if (cn->getTitle() == delSong) { // Song found
+                // If it's the head, move head pointer
+                if (cn == head) {
                     head = cn->next;
-                }else{
-                    prev->next = cn->next;
+                } else {
+                    prev->next = cn->next; // Bypass the current song
                 }
-                cout<<"\nSong '"<<cn->getTitle()<<"' has been Deleted.."<<endl;
-                delete cn;
+                cout << "\nSong '" << cn->getTitle() << "' has been Deleted.." << endl;
+                delete cn; // Free memory
                 return;
             }
-            prev = cn;
-            cn = cn->next;
+            prev = cn; // Update previous pointer
+            cn = cn->next; // Move to next song
         }
        
+        // If song was not found
         cout << "\nSong not found!" << endl;
     }
     
-    void DisplaySong(string title){
-        Song *nn=head;
-        while(nn!=nullptr){
-            if(nn->getTitle()==title){
-                nn->Display();
+    // Method to display a specific song by title
+    void DisplaySong(string title) {
+        Song *nn = head; // Current song pointer
+        // Traverse the playlist
+        while (nn != nullptr) {
+            if (nn->getTitle() == title) { // Song found
+                nn->Display(); // Display song details
                 return;
             }
-            nn = nn->next;
+            nn = nn->next; // Move to the next song
         }
         
+        // If song was not found
         cout << "\nSong not found!" << endl;
     }
-   
 };
 
 int main() {
+    Playlist obj; // Create a Playlist object
+    int Choice; // Variable for user choice
+    string title; // Variable for song title input
    
-    Playlist obj;
-    int Choice;
-    string title;
+    // Display menu options
+    cout << "1. Add Song.\n2. Delete Song.\n3. Display Playlist.\n4. Display Song.\n5. Exit.\n";
    
-    cout<<"1.Add Song.\n2.Delete Song.\n3.Display Playlist.\n4.Display Song.\n5.Exit.\n";
-   
-   bool Check=true;
-   while(Check){
-       cout<<"\nEnter Choice :";
-       cin>>Choice;
-       cin.ignore();
-       switch (Choice){
-           case 1:
-                obj.AddSong();
-                break;
-           case 2:
-                cout<<"Enter Song Title:";
-                getline(cin,title);
-               
-                obj.DeleteSong(title);
-                break;
-           case 3:
-                obj.DisplayPlaylist();
-                break;
-           case 4:
-                cout<<"Enter Song Title:";
-                getline(cin,title);
-                obj.DisplaySong(title);
-                break;
-           case 5:
-                Check = false;
-                break;
-           default:
-                cout<<"Enter Valid Option..."<<endl;
-                break;
-           
-       }
-   }
-   
-   cout<<"\nExiting....";
+    bool Check = true; // Flag to control the main loop
+    while (Check) {
+        cout << "\nEnter Choice: ";
+        cin >> Choice; // Read user choice
+        cin.ignore(); // Ignore newline character
 
-    return 0;
+        // Process user choice
+        switch (Choice) {
+            case 1:
+                obj.AddSong(); // Add a song
+                break;
+            case 2:
+                cout << "Enter Song Title: ";
+                getline(cin, title); // Read song title for deletion
+                obj.DeleteSong(title); // Delete the song
+                break;
+            case 3:
+                obj.DisplayPlaylist(); // Display the playlist
+                break;
+            case 4:
+                cout << "Enter Song Title: ";
+                getline(cin, title); // Read song title to display
+                obj.DisplaySong(title); // Display the specific song
+                break;
+            case 5:
+                Check = false; // Exit the loop
+                break;
+            default:
+                cout << "Enter Valid Option..." << endl; // Handle invalid choice
+                break;
+        }
+    }
+   
+    cout << "\nExiting...."; // Exit message
+    return 0; // Program ends successfully
 }
