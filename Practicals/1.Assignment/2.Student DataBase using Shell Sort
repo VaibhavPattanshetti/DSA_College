@@ -1,57 +1,64 @@
 #include<iostream>
 using namespace std;
 
-class Student{
-    
-    int roll;string name;float sgpa;
+// Define the Student class
+class Student {
+    // Private member variables
+    int roll;           // Roll number of the student
+    string name;       // Name of the student
+    float sgpa;        // SGPA of the student
 
-    public:
+public:
+    // Method to read student data from input
+    void readData() {
+        cin >> name >> roll >> sgpa; // Input: name, roll number, and SGPA
+    }
 
-    void readData(){
-        cin>>name>>roll>>sgpa;
-    };
+    // Method to display student data
+    void displayData() {
+        cout << "Name: " << name << "\nRoll: " << roll << "\nSGPA: " << sgpa << "\n"; // Display student info
+    }
 
-    void displayData(){
-        cout<<"Name: "<<name<<"\nRoll: "<<roll<<"\nSGPA: "<<sgpa<<"\n";
-    };
-    friend void sort(Student obj[],int n);
-
+    // Friend function to allow access to private members for sorting
+    friend void sort(Student obj[], int n);
 };
 
-void sort(Student obj[],int n){
-    
-    for(int gap=n/2;gap>0;gap=gap/2){  //Shell Sort
-        for(int i=gap;i<n;i++){     //Insertion Sort
-            Student x = obj[i];
-            int j = i-gap;
-            while(j>=0 && x.roll<obj[j].roll){
-                obj[j+gap] = obj[j];
-                j = j - gap;
+// Function to sort an array of Student objects by name using Shell Sort
+void sort(Student obj[], int n) {
+    // Initial gap for Shell sort
+    for (int gap = n / 2; gap > 0; gap /= 2) {  // Halve the gap each iteration
+        // Insertion Sort for elements in the current gap
+        for (int i = gap; i < n; i++) {
+            Student x = obj[i]; // Current student to be positioned
+            int j = i - gap; // Index for comparison
+            // Shift elements that are greater than x.name
+            while (j >= 0 && x.name < obj[j].name) {
+                obj[j + gap] = obj[j]; // Move the student to the right
+                j = j - gap; // Move to the previous index
             }
-            obj[j+gap] = x;
+            obj[j + gap] = x; // Insert the current student in the correct position
         }
     }
 }
 
-
-int main(){
-    int n;
-    cout<<"Enter number of students:";
-    cin>>n;
-    Student obj[n];
+int main() {
+    int n; // Variable to hold the number of students
+    cout << "Enter number of students: "; // Prompt for user input
+    cin >> n; // Read number of students
+    Student obj[n]; // Declare an array of Student objects
     
-    cout<<"Enter Your Data\n";
-    for(int i=0;i<n;i++){
-        obj[i].readData();
+    cout << "Enter Your Data\n"; // Prompt for user data input
+    for (int i = 0; i < n; i++) {
+        obj[i].readData(); // Read data for each student
     }
     
-    sort(obj,n);
+    sort(obj, n); // Sort the array of students by name
     
-    cout<<"----------------------------------------------------------------\n";
-    cout<<"Sorted Data\n";
-    for(int i=0;i<n;i++){
-        obj[i].displayData();
+    cout << "----------------------------------------------------------------\n";
+    cout << "Sorted Data\n"; // Display sorted student data
+    for (int i = 0; i < n; i++) {
+        obj[i].displayData(); // Show each student's data
     }
     
-    return 0;
+    return 0; // Indicate successful completion
 }
