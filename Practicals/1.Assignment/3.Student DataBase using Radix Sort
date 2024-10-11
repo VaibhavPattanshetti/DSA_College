@@ -4,7 +4,7 @@ using namespace std;
 
 class Student{
     
-    int roll;string name;float sgpa;
+    int roll;string name;int sgpa;
 
     public:
 
@@ -30,14 +30,14 @@ void countSort(Student obj[],int exp,int n){
     Student output[n];
     
     for(int i=0;i<n;i++){
-        count[(obj[i].roll/exp)%10]++;
+        count[(obj[i].sgpa/exp)%10]++;
     }
     for(int i=1;i<10;i++){
         count[i] += count[i-1];
     }
     for(int i=n-1;i>=0;i--){
-        output[count[(obj[i].roll/exp)%10]-1] = obj[i];
-        count[(obj[i].roll/exp)%10]--;
+        output[count[(obj[i].sgpa/exp)%10]-1] = obj[i];
+        count[(obj[i].sgpa/exp)%10]--;
     }
     for(int i=0;i<n;i++){
         obj[i] = output[i];
@@ -57,8 +57,8 @@ void sort(Student obj[],int n){
 int getMax(Student obj[],int n){
     int ans =INT_MIN;
     for(int i=0;i<n;i++){
-        if(ans < obj[i].roll){
-            ans = obj[i].roll;
+        if(ans < obj[i].sgpa){
+            ans = obj[i].sgpa;
         }
     }
     return ans;
