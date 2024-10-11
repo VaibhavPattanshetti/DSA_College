@@ -1,0 +1,50 @@
+// Online C++ compiler to run C++ program online
+#include <iostream>
+#define size 100
+using namespace std;
+
+class queue{
+  int arr[size]; 
+  int temp=-1;
+  public:
+  int PostfixToInfix(string s){
+      for(int i=0;i<s.length();i++){
+          if(isdigit(s[i])){
+              push(s[i]-'0');
+          }else{
+              int b = pop();
+              int a = pop();
+              operation(a,b,s[i]);
+          }
+          
+      }
+      return pop();
+  }
+  void push(int num){
+      arr[++temp] = num;
+  }
+  int pop(){
+    return arr[temp--];
+  }
+  void operation(int a2,int b2,char exp){
+      if(exp=='+'){
+          push(a2+b2);
+      }else if(exp=='-'){
+          push(a2-b2);
+      }else if(exp=='*'){
+          push(a2*b2);
+      }else if(exp=='/'){
+          push(a2/b2);
+      }
+  }
+};
+int main() {
+    queue obj;
+    string s;
+    cout<<"Enter postfix expression : ";
+    cin>>s;
+    int ans = obj.PostfixToInfix(s);
+    cout<<"Infix expression : "<<ans;
+
+    return 0;
+}
