@@ -1,103 +1,126 @@
 #include <iostream>
 using namespace std;
-class node{
-    string addr;
-    public:
-    node *next;
-    node(){
+
+// Class representing a node in the stack
+class node {
+    string addr; // Address of the web page
+public:
+    node *next; // Pointer to the next node
+
+    // Constructor to initialize the next pointer
+    node() {
         next = nullptr;
     }
-    void read(){
-        cout<<"Enter address: ";
-        cin>>addr;
+
+    // Method to read the web address from user input
+    void read() {
+        cout << "Enter address: ";
+        cin.ignore(); // Clear the input buffer
+        getline(cin, addr); // Read the full address including spaces
     }
-    void display(){
-        cout<<"address: "<<addr<<endl;
+
+    // Method to display the web address
+    void display() {
+        cout << "Address: " << addr << endl;
     }
 };
 
-class browseHistoryStack{
-    node *top;
-    public:
-    browseHistoryStack(){
-        top=nullptr;
+// Class representing the browsing history stack
+class browseHistoryStack {
+    node *top; // Pointer to the top node of the stack
+public:
+    // Constructor to initialize the top pointer
+    browseHistoryStack() {
+        top = nullptr; // Initially, the stack is empty
     }
-    ~browseHistoryStack(){
-        while(top!=nullptr){
-            node *temp = top;
-            top = top->next;
-            delete temp;
+
+    // Destructor to free memory by deleting all nodes in the stack
+    ~browseHistoryStack() {
+        while (top != nullptr) { // Loop until the stack is empty
+            node *temp = top; // Temporarily store the top node
+            top = top->next; // Move the top pointer to the next node
+            delete temp; // Delete the old top node
         }
     }
-    bool isEmpty(){
-        return top==nullptr;
+
+    // Method to check if the stack is empty
+    bool isEmpty() {
+        return top == nullptr; // Return true if top is null
     }
-    void PushPage(){
-        node *nn = new node;
-        nn->read();
-        if(top==nullptr){
-            top = nn;
-        }else{
-            nn->next = top;
-            top = nn;
+
+    // Method to push a new page onto the stack
+    void PushPage() {
+        node *nn = new node; // Create a new node
+        nn->read(); // Read the address into the new node
+        if (top == nullptr) { // If the stack is empty
+            top = nn; // Set the new node as the top
+        } else { // If the stack is not empty
+            nn->next = top; // Link the new node to the current top
+            top = nn; // Update the top pointer to the new node
         }
     }
-    void PopPage(){
-        if(isEmpty()){
-            cout<<"Stack is Empty!!"<<endl;
-            return;
+
+    // Method to pop the top page from the stack
+    void PopPage() {
+        if (isEmpty()) { // Check if the stack is empty
+            cout << "Stack is Empty!!" << endl; // Display a message
+            return; // Exit the function
         }
-        node *temp = top;
-        top = top->next;
-        delete temp;
+        node *temp = top; // Temporarily store the top node
+        top = top->next; // Move the top pointer to the next node
+        delete temp; // Delete the old top node
     }
-    void PeekPage(){
-        if(top==nullptr){
-            cout<<"Stack is Empty!!"<<endl;
-        }else{
-            top->display();
+
+    // Method to peek at the top page without removing it
+    void PeekPage() {
+        if (top == nullptr) { // Check if the stack is empty
+            cout << "Stack is Empty!!" << endl; // Display a message
+        } else {
+            top->display(); // Display the address of the top page
         }
     }
 };
 
-using namespace std;
+// Main function to interact with the user
 int main() {
-    bool check = true;
-    int choice;
-    browseHistoryStack obj;
-    
-    cout<<"1.Add visited page\n2.Navigate back\n3.View current page\n4.Check if history is empty or not\n5.Exit\n";
-    
-    while(check){
-        cout<<"Enter choice :";
-        cin>>choice;
-        switch(choice){
-            case 1:
-                obj.PushPage();
+    bool check = true; // Control variable for the menu loop
+    int choice; // Variable to store user choice
+    browseHistoryStack obj; // Create a browsing history stack object
+
+    // Display menu options
+    cout << "1. Add visited page\n2. Navigate back\n3. View current page\n4. Check if history is empty or not\n5. Exit\n";
+
+    // Loop until the user chooses to exit
+    while (check) {
+        cout << "Enter choice: "; // Prompt for user input
+        cin >> choice; // Read user choice
+        switch (choice) {
+            case 1: // Add visited page
+                obj.PushPage(); // Call the PushPage method
                 break;
-            case 2:
-                obj.PopPage();
+            case 2: // Navigate back
+                obj.PopPage(); // Call the PopPage method
                 break;
-            case 3:
-                obj.PeekPage();
+            case 3: // View current page
+                obj.PeekPage(); // Call the PeekPage method
                 break;
-            case 4:
-                if(obj.isEmpty()){
-                    cout<<"History is empty"<<endl;
-                }else{
-                    cout<<"History is  not empty"<<endl;
+            case 4: // Check if history is empty
+                if (obj.isEmpty()) {
+                    cout << "History is empty" << endl; // Display message
+                } else {
+                    cout << "History is not empty" << endl; // Display message
                 }
                 break;
-            case 5:
-                check= false;
+            case 5: // Exit the program
+                check = false; // Set the control variable to false
                 break;
-            default:
-                cout<<"Enter valid Option!"<<endl;
+            default: // Handle invalid input
+                cout << "Enter valid Option!" << endl; // Display error message
                 break;
         }
     }
-    
-    cout<<"Exiting....";
 
-    return 0;
+    cout << "Exiting...."; // Display exit message
+
+    return 0; // End of program
 }
