@@ -1,83 +1,92 @@
-#include<iostream>
-#include<climits>
+#include <iostream>
+#include <climits> // Included for INT_MIN (not used in this code)
 using namespace std;
 
-class Student{
-    
-    int roll;string name;float sgpa;
+// Employee class to store employee details
+class employee {
+    int id; // Employee ID
+    string name; // Employee name
+    int salary; // Employee salary
 
-    public:
+public:
+    // Method to read employee data
+    void readData() {
+        cin >> name >> id >> salary; // Input name, id, and salary from user
+    }
 
-    void readData(){
-        cin>>name>>roll>>sgpa;
+    // Method to display employee data
+    void displayData() {
+        cout << "Name: " << name << "\nID: " << id << "\nSalary: " << salary << "\n"; // Output employee details
     };
 
-    void displayData(){
-        cout<<"Name: "<<name<<"\nRoll: "<<roll<<"\nSGPA: "<<sgpa<<"\n";
-    };
-    
-    friend void swap(Student& a,Student& b);
-    friend int partition(Student obj[],int low,int high);
-    friend void QuickSort(Student obj[],int low,int high);
-
+    // Friend function declarations for QuickSort
+    friend void swap(employee& a, employee& b); // Swap two employee objects
+    friend int partition(employee obj[], int low, int high); // Partition function for QuickSort
+    friend void QuickSort(employee obj[], int low, int high); // QuickSort function
 };
 
-void swap(Student& a,Student& b){
-    Student temp = a;
-    a = b;
-    b = temp;
+// Function to swap two employee objects
+void swap(employee& a, employee& b) {
+    employee temp = a; // Temporary variable to hold one employee
+    a = b; // Assign second employee to first
+    b = temp; // Assign temporary variable to second employee
 }
 
-int partition(Student obj[],int low,int high){
-    Student pivot = obj[low];
-    int i = low+1;
-    int j = high;
-    
-    while(true){
-        while(i<=j && obj[i].roll<=pivot.roll){
+// Function to partition the array of employees
+int partition(employee obj[], int low, int high) {
+    employee pivot = obj[low]; // Choose the first element as the pivot
+    int i = low + 1; // Pointer for the next element on the left side
+    int j = high; // Pointer for the next element on the right side
+
+    while (true) {
+        // Move the left pointer until an element greater than the pivot is found
+        while (i <= j && obj[i].id <= pivot.id) {
             i++;
         }
-        while(i<=j && obj[i].roll>pivot.roll){
+        // Move the right pointer until an element less than or equal to the pivot is found
+        while (i <= j && obj[j].id > pivot.id) {
             j--;
         }
-        if(i>=j){
+        // If the pointers have crossed, break out of the loop
+        if (i >= j) {
             break;
         }
-        swap(obj[i],obj[j]);
+        swap(obj[i], obj[j]); // Swap the elements at the left and right pointers
     }
-    swap(obj[low],obj[j]);
-    return j;
+    swap(obj[low], obj[j]); // Place the pivot in the correct position
+    return j; // Return the index of the pivot
 }
 
-void QuickSort(Student obj[],int low,int high){
-    
-    if(low<high){
-        int p = partition(obj,low,high);
-        
-        QuickSort(obj,low,p-1);
-        QuickSort(obj,p+1,high);
+// QuickSort function to sort the array of employees
+void QuickSort(employee obj[], int low, int high) {
+    if (low < high) { // Base case for recursion
+        int p = partition(obj, low, high); // Partition the array and get the pivot index
+
+        // Recursively apply QuickSort on the left and right subarrays
+        QuickSort(obj, low, p - 1);
+        QuickSort(obj, p + 1, high);
     }
 }
 
+// Main function to execute the program
+int main() {
+    int n; // Number of employees
+    cout << "Enter number of employees : ";
+    cin >> n; // Input number of employees
+    employee obj[n]; // Create an array of employee objects
 
-int main(){
-    int n;
-    cout<<"Enter number of students:";
-    cin>>n;
-    Student obj[n];
-    
-    cout<<"Enter Your Data\n";
-    for(int i=0;i<n;i++){
-        obj[i].readData();
+    cout << "Enter Your Data\n";
+    for (int i = 0; i < n; i++) {
+        obj[i].readData(); // Read data for each employee
     }
-    
-    QuickSort(obj,0,n-1);
-    
-    cout<<"----------------------------------------------------------------\n";
-    cout<<"Sorted Data\n";
-    for(int i=0;i<n;i++){
-        obj[i].displayData();
+
+    QuickSort(obj, 0, n - 1); // Sort the array of employees using QuickSort
+
+    cout << "----------------------------------------------------------------\n";
+    cout << "Sorted Data\n";
+    for (int i = 0; i < n; i++) {
+        obj[i].displayData(); // Display sorted employee data
     }
-    
-    return 0;
+
+    return 0; // End of program
 }
