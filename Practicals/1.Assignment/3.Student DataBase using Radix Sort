@@ -2,86 +2,114 @@
 #include<climits>
 using namespace std;
 
+// Student class to store roll number, name, and SGPA
 class Student{
     
-    int roll;string name;int sgpa;
+    // Private members of the class
+    int roll;
+    string name;
+    int sgpa;
 
-    public:
-
+public:
+    // Function to read data for a student (name, roll, sgpa)
     void readData(){
-        cin>>name>>roll>>sgpa;
+        cin >> name >> roll >> sgpa;
     };
 
+    // Function to display the data of a student
     void displayData(){
-        cout<<"Name: "<<name<<"\nRoll: "<<roll<<"\nSGPA: "<<sgpa<<"\n";
+        cout << "Name: " << name << "\nRoll: " << roll << "\nSGPA: " << sgpa << "\n";
     };
-    friend void sort(Student obj[],int n);
-    friend int getMax(Student obj[],int n);
-    friend void countSort(Student obj[],int exp,int n);
+
+    // Friend functions for sorting and utility operations
+    friend void sort(Student obj[], int n);
+    friend int getMax(Student obj[], int n);
+    friend void countSort(Student obj[], int exp, int n);
 
 };
 
-void countSort(Student obj[],int exp,int n){
-    int count[10];
+// Function to perform counting sort based on a specific digit (exp)
+void countSort(Student obj[], int exp, int n){
+    int count[10];  // Array to store the count of each digit (0-9)
+    
+    // Initialize count array to 0
     for (int i = 0; i < 10; i++) {
         count[i] = 0;
     }
 
-    Student output[n];
+    Student output[n];  // Temporary array to store the sorted output
     
-    for(int i=0;i<n;i++){
-        count[(obj[i].sgpa/exp)%10]++;
+    // Count the occurrences of each digit in the SGPA for the current place value (exp)
+    for(int i = 0; i < n; i++){
+        count[(obj[i].sgpa / exp) % 10]++;
     }
-    for(int i=1;i<10;i++){
-        count[i] += count[i-1];
+
+    // Update count[i] to contain the actual position of the digit in the output array
+    for(int i = 1; i < 10; i++){
+        count[i] += count[i - 1];
     }
-    for(int i=n-1;i>=0;i--){
-        output[count[(obj[i].sgpa/exp)%10]-1] = obj[i];
-        count[(obj[i].sgpa/exp)%10]--;
+
+    // Build the output array by placing students in the correct sorted order
+    for(int i = n - 1; i >= 0; i--){
+        output[count[(obj[i].sgpa / exp) % 10] - 1] = obj[i];
+        count[(obj[i].sgpa / exp) % 10]--;
     }
-    for(int i=0;i<n;i++){
+
+    // Copy the sorted output back to the original array
+    for(int i = 0; i < n; i++){
         obj[i] = output[i];
     }
 }
 
-void sort(Student obj[],int n){
+// Function to perform radix sort on the array of students
+void sort(Student obj[], int n){
     
-    int max_value = getMax(obj,n);
+    // Get the maximum SGPA to determine the number of digits
+    int max_value = getMax(obj, n);
     
-    for(int exp=1;exp <= max_value;exp=exp*10){
-        countSort(obj,exp,n);
+    // Perform counting sort for every digit (place value: 1, 10, 100, etc.)
+    for(int exp = 1; exp <= max_value; exp = exp * 10){
+        countSort(obj, exp, n);
     }
     
 }
 
-int getMax(Student obj[],int n){
-    int ans =INT_MIN;
-    for(int i=0;i<n;i++){
+// Function to get the maximum SGPA in the student list
+int getMax(Student obj[], int n){
+    int ans = INT_MIN;
+    
+    // Traverse through all students and find the maximum SGPA
+    for(int i = 0; i < n; i++){
         if(ans < obj[i].sgpa){
             ans = obj[i].sgpa;
         }
     }
-    return ans;
+    return ans;  // Return the maximum SGPA
 }
 
-
+// Main function
 int main(){
-    int n;
-    cout<<"Enter number of students:";
-    cin>>n;
-    Student obj[n];
+    int n = 15;  // Number of students
+    Student obj[n];  // Array of Student objects
     
-    cout<<"Enter Your Data\n";
-    for(int i=0;i<n;i++){
+    // Read data for all students
+    cout << "Enter Your Data (Name Roll SGPA):\n";
+    for(int i = 0; i < n; i++){
         obj[i].readData();
     }
     
-    sort(obj,n);
+    // Sort the array of students based on SGPA using radix sort
+    sort(obj, n);
     
-    cout<<"----------------------------------------------------------------\n";
-    cout<<"Sorted Data\n";
-    for(int i=0;i<n;i++){
+    cout << "----------------------------------------------------------------\n";
+    cout << "Top 10 Students : \n";
+
+    // Display the top 10 students (starting from the highest SGPA)
+    int count = 0, i = n - 1;
+    while(count != 10){
         obj[i].displayData();
+        i--;  // Move to the next student with lower SGPA
+        count++;  // Increment the counter for displayed students
     }
     
     return 0;
