@@ -1,97 +1,109 @@
-#include<iostream>
-#include<climits>
+#include <iostream> // Include the iostream library for input and output
 using namespace std;
 
-class Student{
-    
-    int roll;string name;float sgpa;
+// Employee class to store employee details
+class employee {
+    int id; // Employee ID
+    string name; // Employee name
+    int salary; // Employee salary
 
-    public:
+public:
+    // Method to read employee data from user input
+    void readData() {
+        cin >> name >> id >> salary; // Read name, ID, and salary
+    }
 
-    void readData(){
-        cin>>name>>roll>>sgpa;
+    // Method to display employee data
+    void displayData() {
+        cout << "Name: " << name << "\nID: " << id << "\nSalary: " << salary << "\n"; // Print employee details
     };
 
-    void displayData(){
-        cout<<"Name: "<<name<<"\nRoll: "<<roll<<"\nSGPA: "<<sgpa<<"\n";
-    };
-    
-    friend void merge(Student obj[],int low,int mid,int high);
-    friend void mergeSort(Student obj[],int low,int high);
-
+    // Friend function declarations for merge sort
+    friend void merge(employee obj[], int low, int mid, int high); // Function to merge two halves
+    friend void mergeSort(employee obj[], int low, int high); // Function to perform merge sort
 };
 
-void merge(Student obj[],int low,int mid,int high){
-    
-    int n1 = mid-low+1;
-    int n2 = high-mid;
-    
-    Student a[n1],b[n2];
-    
-    for(int i=0;i<n1;i++){
-        a[i] = obj[low+i];
+// Function to merge two halves of the array into a sorted array
+void merge(employee obj[], int low, int mid, int high) {
+    // Calculate sizes of the two subarrays to be merged
+    int n1 = mid - low + 1; // Size of left subarray
+    int n2 = high - mid; // Size of right subarray
+
+    // Temporary arrays to hold the two halves
+    employee a[n1], b[n2];
+
+    // Copy data to temporary arrays
+    for (int i = 0; i < n1; i++) {
+        a[i] = obj[low + i]; // Copy left subarray
     }
-    for(int i=0;i<n2;i++){
-        b[i] = obj[mid+1+i];
+    for (int i = 0; i < n2; i++) {
+        b[i] = obj[mid + 1 + i]; // Copy right subarray
     }
-    
-    int i=0,j=0,k=low;
-    while(i<n1 && j<n2){
-        if(a[i].roll < b[j].roll){
-            obj[k] = a[i];
-            i++;
-            k++;
-        }else{
-            obj[k] = b[j];
-            j++;
-            k++;
+
+    // Initialize pointers for both subarrays
+    int i = 0, j = 0, k = low; // i for left subarray, j for right subarray, k for merged array
+    // Merge the temporary arrays back into obj[]
+    while (i < n1 && j < n2) { // While both subarrays have elements
+        if (a[i].name < b[j].name) { // Compare names
+            obj[k] = a[i]; // If left name is smaller, add it to merged array
+            i++; // Move to next element in left subarray
+        } else {
+            obj[k] = b[j]; // If right name is smaller or equal, add it to merged array
+            j++; // Move to next element in right subarray
         }
+        k++; // Move to next position in the merged array
     }
-    
-    while(i<n1){
-        obj[k] = a[i];
-        i++;
-        k++;
-    }
-    while(j<n2){
-        obj[k] = b[j];
-        j++;
-        k++;
-    }
-    
-}
 
-void mergeSort(Student obj[],int low,int high){
-    
-    if(low<high){
-        int mid = (low+high)/2;
-        
-        mergeSort(obj,low,mid);
-        mergeSort(obj,mid+1,high);
-        
-        merge(obj,low,mid,high);
+    // Copy remaining elements of a[] if any
+    while (i < n1) {
+        obj[k] = a[i]; // Copy remaining elements from left subarray
+        i++; // Move to next element in left subarray
+        k++; // Move to next position in merged array
+    }
+    // Copy remaining elements of b[] if any
+    while (j < n2) {
+        obj[k] = b[j]; // Copy remaining elements from right subarray
+        j++; // Move to next element in right subarray
+        k++; // Move to next position in merged array
     }
 }
 
+// Merge Sort function to sort the employee array
+void mergeSort(employee obj[], int low, int high) {
+    if (low < high) { // Check if the subarray has more than one element
+        int mid = (low + high) / 2; // Find the mid-point
 
-int main(){
-    int n;
-    cout<<"Enter number of students:";
-    cin>>n;
-    Student obj[n];
+        // Recursively sort the first half
+        mergeSort(obj, low, mid);
+        // Recursively sort the second half
+        mergeSort(obj, mid + 1, high);
+
+        // Merge the sorted halves
+        merge(obj, low, mid, high);
+    }
+}
+
+// Main function to execute the program
+int main() {
+    int n; // Number of employees
+    cout << "Enter number of employees : ";
+    cin >> n; // Input the number of employees
+    employee obj[n]; // Create an array of employee objects
     
-    cout<<"Enter Your Data\n";
-    for(int i=0;i<n;i++){
-        obj[i].readData();
+    cout << "Enter Your Data\n";
+    for (int i = 0; i < n; i++) {
+        obj[i].readData(); // Read data for each employee
+    }
+
+    // Sort the employee array using merge sort
+    mergeSort(obj, 0, n - 1);
+
+    // Output the sorted employee data
+    cout << "----------------------------------------------------------------\n";
+    cout << "Sorted Data\n";
+    for (int i = 0; i < n; i++) {
+        obj[i].displayData(); // Display sorted employee data
     }
     
-    mergeSort(obj,0,n-1);
-    
-    cout<<"----------------------------------------------------------------\n";
-    cout<<"Sorted Data\n";
-    for(int i=0;i<n;i++){
-        obj[i].displayData();
-    }
-    
-    return 0;
+    return 0; // End of the program
 }
