@@ -1,112 +1,253 @@
-// Online C++ compiler to run C++ program online
-
 #include <iostream>
 using namespace std;
-class Text{
-    public:
-    string text;
-    Text *next,*prev;
-    
-    Text(){
-        next=nullptr;
-        prev=nullptr;
+
+// Node class to represent each text entry in the doubly linked list
+class node {
+public:
+    node* next;  // Pointer to the next node
+    node* prev;  // Pointer to the previous node
+    string s;    // String to hold the text
+
+    // Constructor to initialize the node pointers to nullptr
+    node() {
+        next = nullptr;
+        prev = nullptr;
     }
-    void Read(){
-        cout<<"Enter text :";
-        cin>>text;
-    }
-    void Display(){
-        cout<<"Entered text :"<<text<<endl;
+
+    // Function to read text input from the user
+    void read() {
+        cout << "Enter the text: ";
+        cin.ignore();  // To handle any leftover newline characters
+        getline(cin, s);  // Use getline to allow spaces in text input
     }
 };
 
-class TextEditor{
-    Text *head,*tail;
-    
-    public:
-    
-    TextEditor(){
-        head=nullptr;
-        tail=nullptr;
+// Class to represent the text editor using a doubly linked list
+class text_Editor {
+public:
+    node* head;  // Pointer to the first node in the list
+    node* tail;  // Pointer to the last node in the list
+    string search_wo;  // Variable to hold the word being searched
+    int n = 0;  // Counter to track positions or occurrences
+
+    // Constructor to initialize head and tail pointers
+    text_Editor() {
+        head = nullptr;
+        tail = nullptr;
     }
-    void AddText(){
-        Text *nn = new Text;
-        nn->Read();
-        
-        if(head==nullptr){
-            head=nn;
-            tail=nn;
-        }else{
-            Text *cn=head;
-            while(cn->next!=nullptr){
-                cn = cn->next;
-            }
-            cn->next = nn;
-            nn->prev = cn;
-            tail = nn;
+
+    // Function to insert a new text at the end of the list
+    void insert_text() {
+        node* new_text = new node;  // Create a new node for the text
+        new_text->read();  // Read the text input from the user
+        if (head == nullptr) {
+            // If the list is empty, set both head and tail to the new node
+            head = new_text;
+            tail = new_text;
+            return;
         }
-    }
-    void DisplayTextEditor(){
-        Text *cn=head;
-        while(cn!=nullptr){
-            cn->Display();
-            cn = cn->next;
-        }
-    }
-    void DisplayTextEditorRev(){
-        Text *cn=tail;
-        while(cn!=nullptr){
-            cn->Display();
-            cn = cn->prev;
-        }
-    }
-    void DeleteText(const string& del) {
-    if (head == nullptr) {
-        cout << "Text Editor is Empty.." << endl;
+
+        // If the list is not empty, append the new node at the end
+        tail->next = new_text;
+        new_text->prev = tail;
+        tail = new_text;
         return;
     }
 
-    Text *cn = head;
-    while (cn != nullptr) {
-        if (cn->text == del) {
-            
-            if (cn == head) {
-                head = cn->next;
-                if (head != nullptr) {
-                    head->prev = nullptr;
-                } else {
-                    tail = nullptr; // List became empty
-                }
-            }
-            
-            else if (cn == tail) {
-                tail = cn->prev;
-                tail->next = nullptr;
-            }
-            
-            else {
-                cn->prev->next = cn->next;
-                cn->next->prev = cn->prev;
-            }
-            delete cn;
-            cout << "Text '" << del << "' is deleted from the Text Editor.." << endl;
+    // Function to delete the last node in the list
+    void del_at_end() {
+        if (tail == nullptr) {
+            cout << "The text editor is empty." << endl;
             return;
         }
-        cn = cn->next;
-    }
-    cout << "Text '" << del << "' is not in the Text Editor.." << endl;
-}
 
+        node* temp = tail;  // Temporary pointer to the last node
+        tail = tail->prev;  // Move the tail to the previous node
+        if (tail != nullptr) {
+            tail->next = nullptr;  // Disconnect the deleted node from the list
+        } else {
+            head = nullptr;  // If the list is now empty, set head to nullptr
+        }
+
+        delete temp;  // Delete the last node
+        cout << "The word is deleted..." << endl;
+    }
+
+    // Function to search for a specific word in the list
+    node* search() {
+        cout << "Write the word: ";
+        cin >> search_wo;
+        n = 0;  // Reset the counter for each search
+
+        node* curr = head;  // Start searching from the head of the list
+        while (curr != nullptr) {
+            if (curr->s == search_wo) {
+                return curr;  // Return the node if the word is found
+            }
+            n++;  // Increment the counter as we move through the list
+            curr = curr->next;  // Move to the next node
+        }
+        return nullptr;  // Return nullptr if the word is not found
+    }
+
+    // Function to delete the first node in the list
+    void delete_at_start() {
+        if (head == nullptr) {
+            cout << "The text editor is empty." << endl;
+            return;
+        }
+
+        node* temp = head;  // Temporary pointer to the head node
+        head = head->next;  // Move the head to the next node
+        if (head == nullptr) {
+            tail = nullptr;  // If the list becomes empty, set tail to nullptr
+        } else {
+            head->prev = nullptr;  // Disconnect the deleted node from the list
+        }
+
+        delete temp;  // Delete the head node
+    }
+
+    // Function to delete a specific word from the list
+    void del_the_spec_word() {
+        node* temp = search();  // Search for the word
+        if (temp == nullptr) {
+            cout << "Word not found!" << endl;
+            return;
+        }
+
+        // If the word is at the start of the list, delete the head
+        if (temp == head) {
+            delete_at_start();
+            cout << "The word is deleted..." << endl;
+            return;
+        }
+        // If the word is at the end of the list, delete the tail
+        if (temp == tail) {
+            del_at_end();
+            return;
+        }
+
+        // If the word is in the middle, adjust the pointers to remove the node
+        temp->prev->next = temp->next;
+        if (temp->next != nullptr) {
+            temp->next->prev = temp->prev;
+        }
+
+        delete temp;  // Delete the node
+        cout << "The word is deleted..." << endl;
+    }
+
+    // Main function to delete text with different options
+    void delete_text() {
+        if (head == nullptr) {
+            cout << "The text editor is empty. Nothing to delete." << endl;
+            return;
+        }
+
+        int choice;
+        cout << "1. Delete End." << " 2. Delete the specific Word." << " 3. Exit." << endl;
+        while (true) {
+            cout << "Delete: Enter the Choice: ";
+            cin >> choice;
+            switch (choice) {
+            case 1:
+                del_at_end();  // Delete the last word
+                break;
+
+            case 2:
+                del_the_spec_word();  // Delete a specific word
+                break;
+
+            case 3:
+                return;  // Exit the delete function
+
+            default:
+                cout << "Invalid choice!" << endl;
+                break;
+            }
+        }
+    }
+
+    // Function to print the list in reverse order
+    void reverse() {
+        if (tail == nullptr) {
+            cout << "The text editor is empty." << endl;
+            return;
+        }
+
+        node* rev = tail;  // Start printing from the tail of the list
+        while (rev != nullptr) {
+            cout << rev->s << " ";  // Print the current node's text
+            rev = rev->prev;  // Move to the previous node
+        }
+        cout << endl;
+    }
+
+    // Function to display the text in the original order
+    void display() {
+        if (head == nullptr) {
+            cout << "The text editor is empty." << endl;
+            return;
+        }
+
+        node* temp = head;  // Start from the head of the list
+        while (temp != nullptr) {
+            cout << temp->s << " ";  // Print the current node's text
+            temp = temp->next;  // Move to the next node
+        }
+        cout << endl;
+    }
 };
 
+// Main function to interact with the text editor
 int main() {
-    TextEditor obj;
-    obj.AddText();
-    obj.AddText();
-    obj.AddText();
-    obj.DisplayTextEditor();
-    obj.DeleteText("ashwin");
-    obj.DisplayTextEditorRev();
+    cout << "1: Insert text " << endl
+         << "2: Delete text" << endl
+         << "3: Display text" << endl
+         << "4: Search text" << endl
+         << "5: Print text in reverse" << endl
+         << "6: Exit" << endl;
 
+    text_Editor te;  // Create an instance of the text editor
+    while (true) {
+        int ch;
+        cout << "Enter the Choice: ";
+        cin >> ch;
+        switch (ch) {
+
+        case 1:
+            te.insert_text();  // Insert new text
+            break;
+
+        case 2:
+            te.delete_text();  // Delete text
+            break;
+
+        case 3:
+            te.display();  // Display the text
+            break;
+
+        case 4:
+            if (te.search()) {
+                cout << "This word is present." << endl;
+            } else {
+                cout << "The word is not present." << endl;
+            }
+            break;
+
+        case 5:
+            te.reverse();  // Print the text in reverse order
+            break;
+
+        case 6:
+            return 0;  // Exit the program
+
+        default:
+            cout << "Incorrect Choice." << endl;
+            break;
+        }
+    }
+    
     return 0;
 }
