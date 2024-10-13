@@ -39,7 +39,9 @@ void sort(Student obj[], int n) {
 }
 
 int main() {
-    int n = 15; // Number of students
+    int n ; // Number of students
+    cout<<"Enter number of students : ";
+    cin>>n;
     Student obj[n]; // Array of Student objects
 
     cout << "Enter Your Data\n"; // Prompt for user input
