@@ -1,0 +1,60 @@
+// Online C++ compiler to run C++ program online
+#include <iostream>
+using namespace std;
+class node{
+    public:
+    int coeff,exp;
+    node *next;
+    node(int a,int b){
+        next = nullptr;
+        coeff = a;
+        exp = b;
+    }
+};
+
+class polynomial{
+    public:
+    node *head;
+    polynomial(){head=nullptr;}
+    void insert(int a,int b){
+        node *nn = new node(a,b);
+        if(head==nullptr || head->exp < b){
+            nn->next = head;
+            head = nn;
+        }else{
+            node *temp=head;
+            while(temp->next!=nullptr && temp->next->exp > b){
+                temp = temp->next;
+            }
+            if(temp->exp == b){
+                temp->coeff += b;
+            }else{
+                nn->next = temp->next;
+                temp->next = nn;
+            }
+        }
+    }
+    void display(){
+        node *temp = head;
+        while(temp!=nullptr){
+            cout<<temp->coeff<<"x^"<<temp->exp;
+            if(temp->next!=nullptr){
+                cout<<"+";
+            }
+            temp = temp->next;
+        }
+        cout<<endl;
+    }
+};
+
+
+int main() {
+    polynomial p1;
+    
+    p1.insert(2,5);
+    p1.insert(1,4);
+    p1.insert(3,7);
+    p1.display();
+
+    return 0;
+}
