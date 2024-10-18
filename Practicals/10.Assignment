@@ -1,0 +1,94 @@
+// Online C++ compiler to run C++ program online
+#include <iostream>
+using namespace std;
+
+class job{
+    
+    public:
+    string jobname;
+    int priority,Time;
+    job *next,*prev;
+    job(){
+        next = prev =nullptr;
+    }
+    void read();
+    void display();
+};
+
+void job::read(){
+    cout<<"Enter job name : ";
+    cin>>jobname;
+    cout<<"Enter priority : ";
+    cin>>priority;
+    cout<<"Enter time : ";
+    cin>>Time;
+}
+
+void job::display(){
+    cout<<"Job name : "<<jobname<<endl;
+    cout<<"Priority : "<<priority<<endl;
+    cout<<"Time : "<<Time<<endl;
+}
+
+class dequeue{
+    job *f,*r;
+    public:
+    dequeue(){
+        f = r = nullptr;
+    }
+    void insertFront(job *nn);
+    void insertEnd(job *nn);
+    void Display();
+    void insert();
+};
+
+void dequeue::Display(){
+    job *cn = f;
+    while(cn!=nullptr){
+        cn->display();
+        cn = cn->next;
+    }
+}
+
+void dequeue::insertFront(job *nn){
+    
+    
+        nn->next = f;
+        f->prev = nn;
+        f = nn;
+}
+
+void dequeue::insertEnd(job *nn){
+    
+    
+        nn->prev = r;
+        r->next = nn;
+        r = nn;
+    
+}
+
+void dequeue::insert(){
+    job *nn = new job;
+    nn->read();
+    if(f==nullptr){
+        f = r = nn;
+    }
+    if(f->priority >= nn->priority){
+        insertFront(nn);
+    }else if(r->priority <= nn->priority){
+       insertEnd(nn);
+    }
+}
+
+
+int main() {
+    int n;
+    dequeue obj;
+    
+    obj.insert();
+    obj.insert();
+    obj.insert();
+    obj.Display();
+
+    return 0;
+}
