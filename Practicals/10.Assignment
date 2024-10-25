@@ -40,7 +40,23 @@ class dequeue{
     void insertEnd(job *nn);
     void Display();
     void insert();
+    void remove();
 };
+
+void dequeue::remove(){
+    if(f==nullptr){
+        cout<<"Queue UnderFlow!!"<<endl;
+        return;
+    }
+    job *temp = f;
+    f = f->next;
+    delete temp;
+    if(f==nullptr){
+        r = nullptr;
+    }else{
+        f->prev = nullptr;
+    }
+}
 
 void dequeue::Display(){
     job *cn = f;
@@ -72,11 +88,15 @@ void dequeue::insert(){
     nn->read();
     if(f==nullptr){
         f = r = nn;
+        return;
     }
     if(f->priority >= nn->priority){
         insertFront(nn);
     }else if(r->priority <= nn->priority){
        insertEnd(nn);
+    }else{
+        cout<<"Invalid Input!!!"<<endl;
+        delete nn;
     }
 }
 
@@ -89,6 +109,9 @@ int main() {
     obj.insert();
     obj.insert();
     obj.Display();
+    obj.remove();
+    obj.Display();
+    obj.remove();
 
     return 0;
 }
