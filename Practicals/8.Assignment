@@ -1,50 +1,133 @@
-// Online C++ compiler to run C++ program online
 #include <iostream>
-#define size 100
+#include <stack>
+#include <string>
+#include <algorithm>  // For reverse
 using namespace std;
 
-class queue{
-  int arr[size]; 
-  int temp=-1;
-  public:
-  int PostfixToInfix(string s){
-      for(int i=0;i<s.length();i++){
-          if(isdigit(s[i])){
-              push(s[i]-'0');
-          }else{
-              int b = pop();
-              int a = pop();
-              operation(a,b,s[i]);
-          }
-          
-      }
-      return pop();
-  }
-  void push(int num){
-      arr[++temp] = num;
-  }
-  int pop(){
-    return arr[temp--];
-  }
-  void operation(int a2,int b2,char exp){
-      if(exp=='+'){
-          push(a2+b2);
-      }else if(exp=='-'){
-          push(a2-b2);
-      }else if(exp=='*'){
-          push(a2*b2);
-      }else if(exp=='/'){
-          push(a2/b2);
-      }
-  }
-};
+// Helper function to determine precedence of operators
+int precedence(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/') return 2;
+    return 0;
+}
+
+// Function to perform arithmetic operations
+int operation(int v1, int v2, char op) {
+    switch (op) {
+        case '+': return v1 + v2;
+        case '-': return v1 - v2;
+        case '*': return v1 * v2;
+        case '/': return v1 / v2;
+        default:
+            cout << "Invalid operator: " << op << endl;
+            return 0;
+    }
+}
+
+// Function to convert infix to postfix
+string infixToPostfix(string infix) {
+    stack<char> st;
+    string postfix = "";
+
+    for (char ch : infix) {
+        if (isdigit(ch)) {
+            postfix += ch;  // Operand goes to the result
+        } else if (ch == '(') {
+            st.push(ch);  // Push opening bracket
+        } else if (ch == ')') {
+            // Pop until matching '('
+            while (!st.empty() && st.top() != '(') {
+                postfix += st.top();
+                st.pop();
+            }
+            st.pop();  // Remove '('
+        } else {
+            // Operator: Pop operators of higher or equal precedence
+            while (!st.empty() && precedence(st.top()) >= precedence(ch)) {
+                postfix += st.top();
+                st.pop();
+            }
+            st.push(ch);
+        }
+    }
+
+    // Pop remaining operators
+    while (!st.empty()) {
+        postfix += st.top();
+        st.pop();
+    }
+
+    return postfix;
+}
+
+// Function to convert infix to prefix
+string infixToPrefix(string infix) {
+    reverse(infix.begin(), infix.end());
+
+    // Reverse brackets
+    for (char &ch : infix) {
+        if (ch == '(') ch = ')';
+        else if (ch == ')') ch = '(';
+    }
+
+    string postfix = infixToPostfix(infix);
+    reverse(postfix.begin(), postfix.end());
+    return postfix;
+}
+
+// Function to evaluate prefix expressions
+int evaluatePrefix(string prefix) {
+    stack<int> st;
+    for (int i = prefix.size() - 1; i >= 0; i--) {
+        char ch = prefix[i];
+        if (isdigit(ch)) {
+            st.push(ch - '0');  // Push operand
+        } else {
+            int v1 = st.top(); st.pop();
+            int v2 = st.top(); st.pop();
+            st.push(operation(v1, v2, ch));  // Perform operation
+        }
+    }
+    return st.top();
+}
+
 int main() {
-    queue obj;
-    string s;
-    cout<<"Enter postfix expression : ";
-    cin>>s;
-    int ans = obj.PostfixToInfix(s);
-    cout<<"Infix expression : "<<ans;
+    string infix;
+    cout << "Enter infix expression: ";
+    cin >> infix;
+
+    // Convert infix to postfix
+    string postfix = infixToPostfix(infix);
+    cout << "Postfix: " << postfix << endl;
+
+    // Convert infix to prefix
+    string prefix = infixToPrefix(infix);
+    cout << "Prefix: " << prefix << endl;
+ 
+// Postfix: 34+52-*
+// Prefix: *+34-52
+
+    // Evaluate postfix
+    cout << "Enter postfix expression to evaluate: ";
+    string postEval;
+    cin >> postEval;
+    stack<int> st;
+    for (char ch : postEval) {
+        if (isdigit(ch)) {
+            st.push(ch - '0');
+        } else {
+            int v2 = st.top(); st.pop();
+            int v1 = st.top(); st.pop();
+            st.push(operation(v1, v2, ch));
+        }
+    }
+    cout << "Postfix Evaluation Result: " << st.top() << endl;
+
+    // Evaluate prefix
+    cout << "Enter prefix expression to evaluate: ";
+    string preEval;
+    cin >> preEval;
+    cout << "Prefix Evaluation Result: " << evaluatePrefix(preEval) << endl;
 
     return 0;
 }
