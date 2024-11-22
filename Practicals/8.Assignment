@@ -131,3 +131,11 @@ int main() {
 
     return 0;
 }
+
+Enter infix expression: (3+4)*(5-2)
+Postfix: 34+52-*
+Prefix: *+34-52
+Enter postfix expression to evaluate: 34+52-*
+Postfix Evaluation Result: 21
+Enter prefix expression to evaluate: *+34-52
+Prefix Evaluation Result: 21
