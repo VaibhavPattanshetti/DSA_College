@@ -1,0 +1,134 @@
+-- Create the database
+CREATE DATABASE BankDB;
+USE BankDB;
+
+-- Create Bank table
+CREATE TABLE Bank_227_230 (
+    Code INT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Address VARCHAR(255)
+);
+
+-- Create Branch table
+CREATE TABLE Branch_227_230 (
+    BranchID INT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Code INT,
+    FOREIGN KEY (Code) REFERENCES Bank_227_230(Code)
+);
+
+-- Create Staff table
+CREATE TABLE Staff_227_230 (
+    StaffID INT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Role VARCHAR(50),
+    Email VARCHAR(100) UNIQUE,
+    Contact VARCHAR(15),
+    Password VARCHAR(255) NOT NULL
+);
+
+-- Create Customers table
+CREATE TABLE Customers_227_230 (
+    CustomerID INT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE,
+    Contact VARCHAR(15),
+    Address TEXT,
+    DOB DATE
+);
+
+-- Create Accounts table
+CREATE TABLE Accounts_227_230 (
+    AccountID INT PRIMARY KEY,
+    AccountType VARCHAR(50) NOT NULL,
+    Balance DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    CustomerID INT,  -- Foreign key reference
+    OpenedDate DATE NOT NULL,
+    FOREIGN KEY (CustomerID) REFERENCES Customers_227_230(CustomerID)
+);
+
+-- Create Loans table
+CREATE TABLE Loans_227_230 (
+    LoanID INT PRIMARY KEY,
+    LoanType VARCHAR(50) NOT NULL,
+    Amount DECIMAL(10,2) NOT NULL,
+    CustomerID INT,  -- Foreign key reference
+    FOREIGN KEY (CustomerID) REFERENCES Customers_227_230(CustomerID)
+);
+
+-- Create Transactions table
+CREATE TABLE Transactions_227_230 (
+    TransactionID INT PRIMARY KEY,
+    AccountID INT,  -- Foreign key reference
+    StaffID INT,  -- Foreign key reference
+    Amount DECIMAL(10,2) NOT NULL,
+    TransactionDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    TransactionType VARCHAR(50) NOT NULL,
+    FOREIGN KEY (AccountID) REFERENCES Accounts_227_230(AccountID),
+    FOREIGN KEY (StaffID) REFERENCES Staff_227_230(StaffID)
+);
+
+-- Insert into Bank table (Top Indian Banks)
+INSERT INTO Bank_227_230 (Code, Name, Address) VALUES
+(101, 'State Bank of India', 'Mumbai, Maharashtra'),
+(102, 'HDFC Bank', 'Mumbai, Maharashtra'),
+(103, 'ICICI Bank', 'Mumbai, Maharashtra'),
+(104, 'Axis Bank', 'Mumbai, Maharashtra'),
+(105, 'Punjab National Bank', 'New Delhi, Delhi');
+
+-- Insert into Branch table (Branches in different cities)
+INSERT INTO Branch_227_230 (BranchID, Name, Code) VALUES
+(201, 'SBI Andheri Branch', 101),
+(202, 'HDFC Connaught Place', 102),
+(203, 'ICICI Electronic City', 103),
+(204, 'Axis Banjara Hills', 104),
+(205, 'PNB Karol Bagh', 105);
+
+-- Insert into Staff table (Employees working at the bank)
+INSERT INTO Staff_227_230 (StaffID, Name, Role, Email, Contact, Password) VALUES
+(301, 'Rajesh Kumar', 'Manager', 'rajesh.kumar@sbi.com', '9876543210', 'pass123'),
+(302, 'Priya Sharma', 'Cashier', 'priya.sharma@hdfc.com', '8765432109', 'pass456'),
+(303, 'Amit Verma', 'Clerk', 'amit.verma@icici.com', '7654321098', 'pass789'),
+(304, 'Neha Singh', 'Assistant Manager', 'neha.singh@axis.com', '7543210987', 'pass987'),
+(305, 'Vikram Bhatia', 'Loan Officer', 'vikram.bhatia@pnb.com', '7432109876', 'pass654');
+
+-- Insert into Customers table (Indian customers)
+INSERT INTO Customers_227_230 (CustomerID, Name, Email, Contact, Address, DOB) VALUES
+(401, 'Rohan Mehta', 'rohan.mehta@gmail.com', '9123456780', 'Pune, Maharashtra', '1995-05-12'),
+(402, 'Sneha Patel', 'sneha.patel@yahoo.com', '9012345678', 'Ahmedabad, Gujarat', '1993-11-25'),
+(403, 'Vikas Gupta', 'vikas.gupta@hotmail.com', '8901234567', 'Kolkata, West Bengal', '1998-07-15'),
+(404, 'Pooja Sharma', 'pooja.sharma@gmail.com', '8790123456', 'Jaipur, Rajasthan', '1992-03-18'),
+(405, 'Manish Tiwari', 'manish.tiwari@yahoo.com', '8690123456', 'Lucknow, Uttar Pradesh', '1996-08-22');
+
+-- Insert into Accounts table (Different account types in Indian banks)
+INSERT INTO Accounts_227_230 (AccountID, AccountType, Balance, CustomerID, OpenedDate) VALUES
+(501, 'Savings', 25000.50, 401, '2020-02-15'),
+(502, 'Current', 50000.75, 402, '2021-06-10'),
+(503, 'Savings', 15000.00, 403, '2019-09-05'),
+(504, 'Fixed Deposit', 100000.00, 404, '2018-12-20'),
+(505, 'Current', 75000.25, 405, '2022-04-30');
+
+-- Insert into Loans table (Different loan types in Indian banks)
+INSERT INTO Loans_227_230 (LoanID, LoanType, Amount, CustomerID) VALUES
+(601, 'Home Loan', 500000, 401),
+(602, 'Car Loan', 300000, 402),
+(603, 'Personal Loan', 100000, 403),
+(604, 'Education Loan', 200000, 404),
+(605, 'Gold Loan', 150000, 405);
+
+-- Insert into Transactions table (Bank transactions by customers)
+INSERT INTO Transactions_227_230 (TransactionID, AccountID, StaffID, Amount, TransactionDate, TransactionType) VALUES
+(701, 501, 301, 5000, '2024-02-05 10:30:00', 'Deposit'),
+(702, 502, 302, 2000, '2024-02-06 12:45:00', 'Withdrawal'),
+(703, 503, 303, 7500, '2024-02-07 15:20:00', 'Deposit'),
+(704, 504, 304, 10000, '2024-02-08 14:10:00', 'Deposit'),
+(705, 505, 305, 5000, '2024-02-09 16:30:00', 'Withdrawal');
+
+SELECT * FROM Bank_227_230;
+SELECT * FROM Branch_227_230;
+SELECT * FROM Staff_227_230;
+SELECT * FROM Customers_227_230;
+SELECT * FROM Accounts_227_230;
+SELECT * FROM Loans_227_230;
+SELECT * FROM Transactions_227_230;
+
