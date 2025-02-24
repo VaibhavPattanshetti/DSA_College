@@ -24,7 +24,44 @@ CREATE TABLE Staff_227_230 (
     Role VARCHAR(50),
     Email VARCHAR(100) UNIQUE,
     Contact VARCHAR(15),
-    Password VARCHAR(255) NOT NULL
+    Password VARCHAR(255) NOT NULL,
+    BranchID INT,
+    FOREIGN KEY (BranchID) REFERENCES Branch_227_230(BranchID)
+);
+
+-- Create Accounts table
+CREATE TABLE Accounts_227_230 (
+    AccountID INT PRIMARY KEY,
+    AccountType VARCHAR(50) NOT NULL,
+    Balance DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    StaffID INT,  -- Foreign key reference
+    OpenedDate DATE NOT NULL,
+    FOREIGN KEY (StaffID) REFERENCES Staff_227_230(StaffID)
+);
+
+
+-- Create Transactions table
+CREATE TABLE Transactions_227_230 (
+    TransactionID INT PRIMARY KEY,
+    AccountID INT,  -- Foreign key reference
+    StaffID INT,  -- Foreign key reference
+    Amount DECIMAL(10,2) NOT NULL,
+    TransactionDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    TransactionType VARCHAR(50) NOT NULL,
+    FOREIGN KEY (AccountID) REFERENCES Accounts_227_230(AccountID),
+    FOREIGN KEY (StaffID) REFERENCES Staff_227_230(StaffID)
+);
+
+
+-- Create Loans table
+CREATE TABLE Loans_227_230 (
+    LoanID INT PRIMARY KEY,
+    LoanType VARCHAR(50) NOT NULL,
+    Amount DECIMAL(10,2) NOT NULL,
+    StaffID INT,  -- Foreign key reference
+    AccountID INT,  -- Foreign key reference
+    FOREIGN KEY (StaffID) REFERENCES Staff_227_230(StaffID),
+    FOREIGN KEY (AccountID) REFERENCES Accounts_227_230(AccountID)
 );
 
 -- Create Customers table
@@ -34,27 +71,11 @@ CREATE TABLE Customers_227_230 (
     Email VARCHAR(100) UNIQUE,
     Contact VARCHAR(15),
     Address TEXT,
-    DOB DATE
+    DOB DATE,
+    AccountID INT,  -- Foreign key reference
+    FOREIGN KEY (AccountID) REFERENCES Accounts_227_230(AccountID)
 );
 
--- Create Accounts table
-CREATE TABLE Accounts_227_230 (
-    AccountID INT PRIMARY KEY,
-    AccountType VARCHAR(50) NOT NULL,
-    Balance DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-    CustomerID INT,  -- Foreign key reference
-    OpenedDate DATE NOT NULL,
-    FOREIGN KEY (CustomerID) REFERENCES Customers_227_230(CustomerID)
-);
-
--- Create Loans table
-CREATE TABLE Loans_227_230 (
-    LoanID INT PRIMARY KEY,
-    LoanType VARCHAR(50) NOT NULL,
-    Amount DECIMAL(10,2) NOT NULL,
-    CustomerID INT,  -- Foreign key reference
-    FOREIGN KEY (CustomerID) REFERENCES Customers_227_230(CustomerID)
-);
 
 -- Create Transactions table
 CREATE TABLE Transactions_227_230 (
@@ -131,4 +152,81 @@ SELECT * FROM Customers_227_230;
 SELECT * FROM Accounts_227_230;
 SELECT * FROM Loans_227_230;
 SELECT * FROM Transactions_227_230;
+
+-- Create a new user 'cashier' with a password
+CREATE USER 'cashier'@'localhost' IDENTIFIED BY 'cashier123';
+
+-- Grant only SELECT and UPDATE permissions on Accounts and Transactions tables
+GRANT SELECT, UPDATE ON BankDB.Accounts_227_230 TO 'cashier'@'localhost';
+
+
+-- Apply the changes
+FLUSH PRIVILEGES;
+
+-- Insert into Bank table (More Indian Banks)
+INSERT INTO Bank_227_230 (Code, Name, Address) VALUES
+(106, 'Bank of Baroda', 'Vadodara, Gujarat'),
+(107, 'Kotak Mahindra Bank', 'Mumbai, Maharashtra'),
+(108, 'Union Bank of India', 'Mumbai, Maharashtra'),
+(109, 'IndusInd Bank', 'Pune, Maharashtra'),
+(110, 'Canara Bank', 'Bengaluru, Karnataka');
+
+-- Insert into Branch table (More branches in different cities)
+INSERT INTO Branch_227_230 (BranchID, Name, Code) VALUES
+(206, 'BoB Ahmedabad Branch', 106),
+(207, 'Kotak Mahindra Connaught Place', 107),
+(208, 'Union Bank Salt Lake', 108),
+(209, 'IndusInd FC Road', 109),
+(210, 'Canara Bank MG Road', 110);
+
+-- Insert into Staff table (More employees)
+INSERT INTO Staff_227_230 (StaffID, Name, Role, Email, Contact, Password) VALUES
+(306, 'Suresh Reddy', 'Manager', 'suresh.reddy@bob.com', '8321098765', 'pass111'),
+(307, 'Anjali Menon', 'Cashier', 'anjali.menon@kotak.com', '8210987654', 'pass222'),
+(308, 'Rakesh Sharma', 'Clerk', 'rakesh.sharma@unionbank.com', '8109876543', 'pass333'),
+(309, 'Kavita Joshi', 'Assistant Manager', 'kavita.joshi@indusind.com', '8098765432', 'pass444'),
+(310, 'Nitin Choudhary', 'Loan Officer', 'nitin.choudhary@canarabank.com', '7987654321', 'pass555');
+
+-- Insert into Customers table (More customers)
+INSERT INTO Customers_227_230 (CustomerID, Name, Email, Contact, Address, DOB) VALUES
+(406, 'Rahul Nair', 'rahul.nair@gmail.com', '8598765432', 'Bengaluru, Karnataka', '1994-09-10'),
+(407, 'Deepika Rao', 'deepika.rao@yahoo.com', '8487654321', 'Hyderabad, Telangana', '1990-06-20'),
+(408, 'Sandeep Singh', 'sandeep.singh@hotmail.com', '8376543210', 'Chandigarh, Punjab', '1997-12-05'),
+(409, 'Megha Deshmukh', 'megha.deshmukh@gmail.com', '8265432109', 'Nagpur, Maharashtra', '1995-01-30'),
+(410, 'Ankit Jain', 'ankit.jain@yahoo.com', '8154321098', 'Indore, Madhya Pradesh', '1993-04-15');
+
+-- Insert into Accounts table (More accounts)
+INSERT INTO Accounts_227_230 (AccountID, AccountType, Balance, CustomerID, OpenedDate) VALUES
+(506, 'Savings', 18000.75, 406, '2019-08-25'),
+(507, 'Current', 60000.50, 407, '2021-03-15'),
+(508, 'Savings', 32000.00, 408, '2020-11-10'),
+(509, 'Fixed Deposit', 120000.00, 409, '2017-07-05'),
+(510, 'Current', 85000.40, 410, '2022-10-20');
+
+-- Insert into Loans table (More loan records)
+INSERT INTO Loans_227_230 (LoanID, LoanType, Amount, CustomerID) VALUES
+(606, 'Home Loan', 550000, 406),
+(607, 'Car Loan', 350000, 407),
+(608, 'Personal Loan', 120000, 408),
+(609, 'Education Loan', 250000, 409),
+(610, 'Gold Loan', 180000, 410);
+
+-- Insert into Transactions table (More transactions)
+INSERT INTO Transactions_227_230 (TransactionID, AccountID, StaffID, Amount, TransactionDate, TransactionType) VALUES
+(706, 506, 306, 8000, '2024-02-10 11:00:00', 'Deposit'),
+(707, 507, 307, 3000, '2024-02-11 13:15:00', 'Withdrawal'),
+(708, 508, 308, 9000, '2024-02-12 16:40:00', 'Deposit'),
+(709, 509, 309, 15000, '2024-02-13 14:20:00', 'Deposit'),
+(710, 510, 310, 7000, '2024-02-14 17:50:00', 'Withdrawal');
+
+CREATE USER 'manager'@'localhost' IDENTIFIED BY 'manager123';
+GRANT SELECT,UPDATE ON bankDB.Bank_227_230 TO 'manager'@'localhost';
+GRANT SELECT,UPDATE ON bankDB.Branch_227_230 TO 'manager'@'localhost';
+GRANT all privileges ON bankDB.Staff_227_230 TO 'manager'@'localhost';
+GRANT all privileges ON bankDB.Customers_227_230 TO 'manager'@'localhost';
+GRANT all privileges ON bankDB.Accounts_227_230 TO 'manager'@'localhost';
+GRANT all privileges ON bankDB.Loans_227_230 TO 'manager'@'localhost';
+GRANT all privileges ON bankDB.Transactions_227_230 TO 'manager'@'localhost';
+
+
 
