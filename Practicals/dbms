@@ -29,14 +29,28 @@ CREATE TABLE Staff_227_230 (
     FOREIGN KEY (BranchID) REFERENCES Branch_227_230(BranchID)
 );
 
+
+-- Create Customers table
+CREATE TABLE Customers_227_230 (
+    CustomerID INT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE,
+    Contact VARCHAR(15),
+    Address TEXT,
+    DOB DATE,
+    BranchID INT,  -- Foreign key reference
+    FOREIGN KEY (BranchID) REFERENCES Branch_227_230(BranchID)
+);
+
+
 -- Create Accounts table
 CREATE TABLE Accounts_227_230 (
     AccountID INT PRIMARY KEY,
     AccountType VARCHAR(50) NOT NULL,
     Balance DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-    StaffID INT,  -- Foreign key reference
+    CustomerID INT,  -- Foreign key reference
     OpenedDate DATE NOT NULL,
-    FOREIGN KEY (StaffID) REFERENCES Staff_227_230(StaffID)
+    FOREIGN KEY (CustomerID) REFERENCES Customers_227_230(CustomerID)
 );
 
 
@@ -59,174 +73,32 @@ CREATE TABLE Loans_227_230 (
     LoanType VARCHAR(50) NOT NULL,
     Amount DECIMAL(10,2) NOT NULL,
     StaffID INT,  -- Foreign key reference
-    AccountID INT,  -- Foreign key reference
+    CustomerID INT,  -- Foreign key reference
     FOREIGN KEY (StaffID) REFERENCES Staff_227_230(StaffID),
-    FOREIGN KEY (AccountID) REFERENCES Accounts_227_230(AccountID)
+    FOREIGN KEY (CustomerID) REFERENCES Customers_227_230(CustomerID)
 );
 
--- Create Customers table
-CREATE TABLE Customers_227_230 (
-    CustomerID INT PRIMARY KEY,
-    Name VARCHAR(100) NOT NULL,
-    Email VARCHAR(100) UNIQUE,
-    Contact VARCHAR(15),
-    Address TEXT,
-    DOB DATE,
-    AccountID INT,  -- Foreign key reference
-    FOREIGN KEY (AccountID) REFERENCES Accounts_227_230(AccountID)
-);
+-- Create the trigger to prevent withdrawal beyond available balance
+DELIMITER $$
 
+CREATE TRIGGER check_balance_before_transaction
+BEFORE INSERT ON Transactions_227_230
+FOR EACH ROW
+BEGIN
+    DECLARE balance DECIMAL(10,2);
+    
+    -- Fetch the current balance of the account involved in the transaction
+    SELECT Balance INTO balance
+    FROM Accounts_227_230
+    WHERE AccountID = NEW.AccountID;
+    
+    -- Check if the transaction is a withdrawal and the balance is insufficient
+    IF NEW.TransactionType = 'Withdraw' AND balance < NEW.Amount THEN
+        -- Raise an error if funds are insufficient
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient funds';
+    END IF;
+END $$
 
--- Create Transactions table
-CREATE TABLE Transactions_227_230 (
-    TransactionID INT PRIMARY KEY,
-    AccountID INT,  -- Foreign key reference
-    StaffID INT,  -- Foreign key reference
-    Amount DECIMAL(10,2) NOT NULL,
-    TransactionDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    TransactionType VARCHAR(50) NOT NULL,
-    FOREIGN KEY (AccountID) REFERENCES Accounts_227_230(AccountID),
-    FOREIGN KEY (StaffID) REFERENCES Staff_227_230(StaffID)
-);
-
--- Insert into Bank table (Top Indian Banks)
-INSERT INTO Bank_227_230 (Code, Name, Address) VALUES
-(101, 'State Bank of India', 'Mumbai, Maharashtra'),
-(102, 'HDFC Bank', 'Mumbai, Maharashtra'),
-(103, 'ICICI Bank', 'Mumbai, Maharashtra'),
-(104, 'Axis Bank', 'Mumbai, Maharashtra'),
-(105, 'Punjab National Bank', 'New Delhi, Delhi');
-
--- Insert into Branch table (Branches in different cities)
-INSERT INTO Branch_227_230 (BranchID, Name, Code) VALUES
-(201, 'SBI Andheri Branch', 101),
-(202, 'HDFC Connaught Place', 102),
-(203, 'ICICI Electronic City', 103),
-(204, 'Axis Banjara Hills', 104),
-(205, 'PNB Karol Bagh', 105);
-
--- Insert into Staff table (Employees working at the bank)
-INSERT INTO Staff_227_230 (StaffID, Name, Role, Email, Contact, Password) VALUES
-(301, 'Rajesh Kumar', 'Manager', 'rajesh.kumar@sbi.com', '9876543210', 'pass123'),
-(302, 'Priya Sharma', 'Cashier', 'priya.sharma@hdfc.com', '8765432109', 'pass456'),
-(303, 'Amit Verma', 'Clerk', 'amit.verma@icici.com', '7654321098', 'pass789'),
-(304, 'Neha Singh', 'Assistant Manager', 'neha.singh@axis.com', '7543210987', 'pass987'),
-(305, 'Vikram Bhatia', 'Loan Officer', 'vikram.bhatia@pnb.com', '7432109876', 'pass654');
-
--- Insert into Customers table (Indian customers)
-INSERT INTO Customers_227_230 (CustomerID, Name, Email, Contact, Address, DOB) VALUES
-(401, 'Rohan Mehta', 'rohan.mehta@gmail.com', '9123456780', 'Pune, Maharashtra', '1995-05-12'),
-(402, 'Sneha Patel', 'sneha.patel@yahoo.com', '9012345678', 'Ahmedabad, Gujarat', '1993-11-25'),
-(403, 'Vikas Gupta', 'vikas.gupta@hotmail.com', '8901234567', 'Kolkata, West Bengal', '1998-07-15'),
-(404, 'Pooja Sharma', 'pooja.sharma@gmail.com', '8790123456', 'Jaipur, Rajasthan', '1992-03-18'),
-(405, 'Manish Tiwari', 'manish.tiwari@yahoo.com', '8690123456', 'Lucknow, Uttar Pradesh', '1996-08-22');
-
--- Insert into Accounts table (Different account types in Indian banks)
-INSERT INTO Accounts_227_230 (AccountID, AccountType, Balance, CustomerID, OpenedDate) VALUES
-(501, 'Savings', 25000.50, 401, '2020-02-15'),
-(502, 'Current', 50000.75, 402, '2021-06-10'),
-(503, 'Savings', 15000.00, 403, '2019-09-05'),
-(504, 'Fixed Deposit', 100000.00, 404, '2018-12-20'),
-(505, 'Current', 75000.25, 405, '2022-04-30');
-
--- Insert into Loans table (Different loan types in Indian banks)
-INSERT INTO Loans_227_230 (LoanID, LoanType, Amount, CustomerID) VALUES
-(601, 'Home Loan', 500000, 401),
-(602, 'Car Loan', 300000, 402),
-(603, 'Personal Loan', 100000, 403),
-(604, 'Education Loan', 200000, 404),
-(605, 'Gold Loan', 150000, 405);
-
--- Insert into Transactions table (Bank transactions by customers)
-INSERT INTO Transactions_227_230 (TransactionID, AccountID, StaffID, Amount, TransactionDate, TransactionType) VALUES
-(701, 501, 301, 5000, '2024-02-05 10:30:00', 'Deposit'),
-(702, 502, 302, 2000, '2024-02-06 12:45:00', 'Withdrawal'),
-(703, 503, 303, 7500, '2024-02-07 15:20:00', 'Deposit'),
-(704, 504, 304, 10000, '2024-02-08 14:10:00', 'Deposit'),
-(705, 505, 305, 5000, '2024-02-09 16:30:00', 'Withdrawal');
-
-SELECT * FROM Bank_227_230;
-SELECT * FROM Branch_227_230;
-SELECT * FROM Staff_227_230;
-SELECT * FROM Customers_227_230;
-SELECT * FROM Accounts_227_230;
-SELECT * FROM Loans_227_230;
-SELECT * FROM Transactions_227_230;
-
--- Create a new user 'cashier' with a password
-CREATE USER 'cashier'@'localhost' IDENTIFIED BY 'cashier123';
-
--- Grant only SELECT and UPDATE permissions on Accounts and Transactions tables
-GRANT SELECT, UPDATE ON BankDB.Accounts_227_230 TO 'cashier'@'localhost';
-
-
--- Apply the changes
-FLUSH PRIVILEGES;
-
--- Insert into Bank table (More Indian Banks)
-INSERT INTO Bank_227_230 (Code, Name, Address) VALUES
-(106, 'Bank of Baroda', 'Vadodara, Gujarat'),
-(107, 'Kotak Mahindra Bank', 'Mumbai, Maharashtra'),
-(108, 'Union Bank of India', 'Mumbai, Maharashtra'),
-(109, 'IndusInd Bank', 'Pune, Maharashtra'),
-(110, 'Canara Bank', 'Bengaluru, Karnataka');
-
--- Insert into Branch table (More branches in different cities)
-INSERT INTO Branch_227_230 (BranchID, Name, Code) VALUES
-(206, 'BoB Ahmedabad Branch', 106),
-(207, 'Kotak Mahindra Connaught Place', 107),
-(208, 'Union Bank Salt Lake', 108),
-(209, 'IndusInd FC Road', 109),
-(210, 'Canara Bank MG Road', 110);
-
--- Insert into Staff table (More employees)
-INSERT INTO Staff_227_230 (StaffID, Name, Role, Email, Contact, Password) VALUES
-(306, 'Suresh Reddy', 'Manager', 'suresh.reddy@bob.com', '8321098765', 'pass111'),
-(307, 'Anjali Menon', 'Cashier', 'anjali.menon@kotak.com', '8210987654', 'pass222'),
-(308, 'Rakesh Sharma', 'Clerk', 'rakesh.sharma@unionbank.com', '8109876543', 'pass333'),
-(309, 'Kavita Joshi', 'Assistant Manager', 'kavita.joshi@indusind.com', '8098765432', 'pass444'),
-(310, 'Nitin Choudhary', 'Loan Officer', 'nitin.choudhary@canarabank.com', '7987654321', 'pass555');
-
--- Insert into Customers table (More customers)
-INSERT INTO Customers_227_230 (CustomerID, Name, Email, Contact, Address, DOB) VALUES
-(406, 'Rahul Nair', 'rahul.nair@gmail.com', '8598765432', 'Bengaluru, Karnataka', '1994-09-10'),
-(407, 'Deepika Rao', 'deepika.rao@yahoo.com', '8487654321', 'Hyderabad, Telangana', '1990-06-20'),
-(408, 'Sandeep Singh', 'sandeep.singh@hotmail.com', '8376543210', 'Chandigarh, Punjab', '1997-12-05'),
-(409, 'Megha Deshmukh', 'megha.deshmukh@gmail.com', '8265432109', 'Nagpur, Maharashtra', '1995-01-30'),
-(410, 'Ankit Jain', 'ankit.jain@yahoo.com', '8154321098', 'Indore, Madhya Pradesh', '1993-04-15');
-
--- Insert into Accounts table (More accounts)
-INSERT INTO Accounts_227_230 (AccountID, AccountType, Balance, CustomerID, OpenedDate) VALUES
-(506, 'Savings', 18000.75, 406, '2019-08-25'),
-(507, 'Current', 60000.50, 407, '2021-03-15'),
-(508, 'Savings', 32000.00, 408, '2020-11-10'),
-(509, 'Fixed Deposit', 120000.00, 409, '2017-07-05'),
-(510, 'Current', 85000.40, 410, '2022-10-20');
-
--- Insert into Loans table (More loan records)
-INSERT INTO Loans_227_230 (LoanID, LoanType, Amount, CustomerID) VALUES
-(606, 'Home Loan', 550000, 406),
-(607, 'Car Loan', 350000, 407),
-(608, 'Personal Loan', 120000, 408),
-(609, 'Education Loan', 250000, 409),
-(610, 'Gold Loan', 180000, 410);
-
--- Insert into Transactions table (More transactions)
-INSERT INTO Transactions_227_230 (TransactionID, AccountID, StaffID, Amount, TransactionDate, TransactionType) VALUES
-(706, 506, 306, 8000, '2024-02-10 11:00:00', 'Deposit'),
-(707, 507, 307, 3000, '2024-02-11 13:15:00', 'Withdrawal'),
-(708, 508, 308, 9000, '2024-02-12 16:40:00', 'Deposit'),
-(709, 509, 309, 15000, '2024-02-13 14:20:00', 'Deposit'),
-(710, 510, 310, 7000, '2024-02-14 17:50:00', 'Withdrawal');
-
-CREATE USER 'manager'@'localhost' IDENTIFIED BY 'manager123';
-GRANT SELECT,UPDATE ON bankDB.Bank_227_230 TO 'manager'@'localhost';
-GRANT SELECT,UPDATE ON bankDB.Branch_227_230 TO 'manager'@'localhost';
-GRANT all privileges ON bankDB.Staff_227_230 TO 'manager'@'localhost';
-GRANT all privileges ON bankDB.Customers_227_230 TO 'manager'@'localhost';
-GRANT all privileges ON bankDB.Accounts_227_230 TO 'manager'@'localhost';
-GRANT all privileges ON bankDB.Loans_227_230 TO 'manager'@'localhost';
-GRANT all privileges ON bankDB.Transactions_227_230 TO 'manager'@'localhost';
-
+DELIMITER ;
 
 
